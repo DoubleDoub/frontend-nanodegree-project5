@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Awesome map</title>
+    <!-- https://github.com/chyingp/grunt-inline -->
+    <link rel="stylesheet" type="text/css" href="../dist/css/style.css">
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyCXx6uhfL-KLglmwlanpjhuVUDTWq-zQCI"></script>
+    <script type="text/javascript" src="./js/bundle.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <div class="notification" databind="css : cssClass }">
+        <p data-bind="text: type"></p>
+        <p data-bind="text: message"></p>
+        <button data-bind="text : bttntxt, click: toggle"></button>
+    </div>
+    
+    <div class="app flex-container">
+        <header>
+            <nav>
+                <!-- <div class="hamburger-menu"></div> -->
+                <!-- <div class="search-bar">
+                    <div class="search-icon">Search</div>
+                </div> -->
+            </nav>
+            <div class="logo"><img alt="My awesome Logo" /></div>
+        </header>
+
+        <main>
+                <div class="map" id="map"></div>
+                <div class="list" id="list"><p>Testing test test</p></div>
+        </main>
+        <footer id='footer'>
+            <!-- <p>this is a footer</p> -->
+        </footer>
+    </div>
+
+</body>
+</html> 

@@ -1,0 +1,23 @@
+{
+  "name": "Neighborhood Map Project",
+  "version": "0.0.1",
+  "authors": [
+    "wietse <wietse@nightly.nl>"
+  ],
+  "description": "5th project for nanodegree front-end web developer",
+  "moduleType": [
+    "globals"
+  ],
+  "license": "N/A",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "knockout": "~3.3.0",
+    "material-design-icons": "~1.0.1"
+  }
+}

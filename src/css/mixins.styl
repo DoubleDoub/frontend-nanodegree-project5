@@ -1,0 +1,28 @@
+/**
+* Mixin for creating a flexbox flex-containter
+* @param direction establish main axis column || row
+* @param align alignment along cross axis flex-start || flex-end || center || 
+*        baseline || stretch
+* @param justify alingment along the main axis flex-start || flex-end ||
+*        center || space-between space-around
+* @param wrap(optional) wrap || nowrap || wrap-referse || nowrap  
+**/
+flex-container(direction, align, justify, wrap=nowrap)
+    display -webkit-flex
+    display flex
+    -webkit-flex-direction direction
+    -ms-flex-direction direction
+    flex-direction direction
+    -webkit-align-items align
+    -ms-align-items align
+    align-items align
+    -webkit-justify-content justify
+    -ms-justify-content justify
+    justify-content justify
+    
+full-screen()
+    position absolute
+    top 0
+    right 0
+    bottom 0
+    left 0

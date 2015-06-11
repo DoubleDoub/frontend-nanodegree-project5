@@ -1,0 +1,181 @@
+@import "mixins.styl"
+// @import "sprite-navigation-white.css"
+
+
+// variables
+//z-index 'namespacing'
+$z-app  = 1000
+$z-notification = 9000
+
+// reset box-sizing
+html {
+    -webkit-box-sizing border-box
+    -moz-box-sizing border-box
+    box-sizing border-box
+}
+
+*, *:before, *:after {
+    -webkit-box-sizing inherit
+    -moz-box-sizing inherit
+    box-sizing inherit
+}
+
+body, html {
+    margin 0
+    padding 0
+    background-color beige
+    height 100%
+    // full-screen()
+}
+
+ul {
+    margin 0
+    padding 0
+}
+
+nav {
+    positon absolute
+    top 0
+    //transform translateX(-300px)
+    transition transform 0.2s
+    //width 300px
+    margin 0
+    padding 0
+    background-color green
+}
+
+nav.open {
+    transform translateX(0px);
+}
+
+
+.search-bar { 
+    width 300px
+}
+
+.app {
+    min-height 100%
+    full-screen()
+    z-index z-app
+}
+.flex-container {
+    flex-container(column, stretch, flex-start, wrap)
+}
+
+header {
+    height 10%
+    background-color red
+    // flex-grow 1
+}
+
+main {
+    flex-container(row, stretch, flex-start, wrap)
+    height 80%
+    // flex 1 1 auto
+    // margin-bottom 1px
+
+}
+.map {
+    height 100%
+    // flex 1 1 auto
+    // position relative
+    // top 0
+    // right 0
+    // bottom 0
+    // left 0
+    //full-screen()
+    // width 500px
+    // flex-grow 3
+}
+
+footer {
+    // flex 1 1 auto
+    height 10%
+    background-color lime
+    overflow auto
+    // padding-right: 15px;
+}
+
+@media screen and (max-width : 499px) {
+    .list {
+        //display none
+        width 0%
+        transform translateX(-499px)
+        transition translateX 0.5s ease
+    }
+    .list.list-active { 
+        width 100%
+        transform translateX(0px)
+    }
+    .map {
+        width 100%
+        tranform translateX (499px)
+        transition translateX 0.5s ease
+        
+    }
+    .map.list-active {
+        width 0%
+        transform translateX(0px)
+    }
+}
+
+@media screen and (min-width : 500px) {
+    main {
+        flex-container(row, stretch, flex-start, wrap)
+    }
+    
+    .list {
+        width 50%
+        background-color yellow
+        display inline-block
+    }
+    .map {
+        width 50%
+        display inline-block
+    }
+}
+
+.hamburger-menu
+{
+    width:30px;
+    height:5px;
+    background-color:#111;
+    border-radius:5px;
+    position:relative;
+}
+
+.hamburger-menu:after, .hamburger-menu:before
+{
+    content: '';
+    width: 100%;
+    height:5px;
+    background-color:#111;
+    position:absolute;
+    border-radius:5px;
+}
+
+.hamburger-menu:after
+{
+    top:10px;
+}
+
+.hamburger-menu:before
+{
+    top:20px;
+}
+
+$notif-width = 50%
+.notification {
+    position absolute
+    top $notif-width
+    width $notif-width
+    left $notif-width
+    transform translateX(100%)
+    z-index $z-notification
+    background-color red
+    transition transform 0.2s
+}
+
+.showNotification {
+    transform translateX(-50%)
+}
