@@ -1,10 +1,9 @@
 // global === window through browserify
 // console.log(global === window); //true
 var ko = global.ko = require('../../bower_components/knockout/dist/knockout.js');
+var GuideModule = global.Guide = require ('./viewModels/guides');
 
-var GuideModule = require ('./viewModels/places');
-
-
+console.log(GuideModule);
 // map place holder
 var map;
 //initialize the app
@@ -18,21 +17,39 @@ function initMap() {
     };
     map = new google.maps.Map(document.getElementById('map'), mapOptions);
 
+    // draw circle with 20km radius to show limits of wikimedia api queries
+    var circle = new google.maps.Circle({ 
+        map: map, 
+        radius: 20000, 
+        center : new google.maps.LatLng(map.getCenter().lat(), map.getCenter().lng())
+    });
     var f = window.document.getElementById('list');
-    var guideList = GuideModule.createObject();
-    var guideListViewModel = global.list = guideList.viewModel;
-    f.appendChild(guideList.view);
-
+    var savedGuides = GuideModule.SavedGuides.init();
+    var savedGuidesViewModel = savedGuides.viewModel;
+    f.appendChild(savedGuides.view);
+    
+    //var mapGuideList = new GuideModule.createObject();
+    var guideListViewModel = new GuideModule.GuideList();
 
     google.maps.event.addListener(map, 'center_changed', function(e){
         // only get new guides when the map is not being moved for a short period
         var previousCoordinates = map.getCenter();
         global.setTimeout(function () {
                 if (previousCoordinates === map.getCenter()){
+                    // update guides data then updata markers on the map
                     guideListViewModel.update(map.getCenter().lat(), map.getCenter().lng(), updateMarkers);
                 }
-
         },200);
+        // remove the circle
+        //circle.setMap(null);
+        // circle = null;
+        // // create new circle at new coordinates
+        // circle = new google.maps.Circle({ 
+        // map: map, 
+        // radius: 20000, 
+        // center : new google.maps.LatLng(map.getCenter().lat(), map.getCenter().lng())
+        // });
+        circle.setCenter(new google.maps.LatLng(map.getCenter().lat(), map.getCenter().lng()));
     });
 }
 
@@ -47,10 +64,7 @@ function initMap() {
 var updateMarkers = function (error, guideList) {
     // array to hold all markers
     var markers = [];
-    console.log(guideList().length);
-    console.log(guideList());
     guideList = guideList();
-    // console.log('array' === instanceof guideList);
     if (error){
         return console.warn(error);
     }
@@ -64,7 +78,7 @@ var updateMarkers = function (error, guideList) {
         });
 
         marker.infoWindow = new google.maps.InfoWindow({
-            content : GuideModule.createInfoWindow(data).view
+            content : createInfoWindow(data).view
         });
 
         // tell jshint to ignore function in loop warning
@@ -86,6 +100,26 @@ var updateMarkers = function (error, guideList) {
         /* jshint +W083 */
     }
 };
+
+/**
+ * Create innerHtml for an InfoWindow in google maps
+ * @param  {object} data(optional) The data to be used in the info Window
+ * @return {[type]}      [description]
+ */
+var createInfoWindow = function(data){
+    var vm,el;
+    el = global.document.createElement('div');
+    el.innerHTML = require('./views/guide-info-window.html');
+    // if data is not already a viewModel we need to transform it into one
+    if (!(data instanceof GuideModule.Guide)){
+        data = new GuideModule.Guide(data);
+    }
+    ko.applyBindings(data, el);
+
+    return {view : el, viewModel : vm};
+};
+
+
 
 function initNotificationUI(){
     var el = global.document.getElementsByClassName('notification')[0];
