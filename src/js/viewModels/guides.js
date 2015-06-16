@@ -42,11 +42,39 @@ ko.components.register('guide', {
 });
 
 
-function GuideList(guides) {
-    guides = guides || [];
-    //Guide data retrieved from misc sources
+
+var GuideList = function () {
+    var guides = guides || [];
+    //guides shown on the map
     this.mapData = ko.observableArray(guides);
-}
+    
+    // The initial filter to prepopulate the input tag. 
+    // this value will be ignored when filtering. 
+    var filterValue = 'Filter';
+    this.filter = ko.observable(filterValue);
+    
+    // get all saved guides from local storage
+    var savedGuides = JSON.parse(global.localStorage.getItem('guides')) || [];
+    // make it an observableArray
+    this.savedGuides = ko.observableArray([]);
+    //push all saved items to the observable
+    for (var i = savedGuides.length - 1; i >= 0; i--) {
+        // we need them to be Guide Objects
+        this.savedGuides.push(new Guide(savedGuides[i]));
+    }
+    this.filteredGuides = ko.computed(function () {
+        var filter = this.filter().toLowerCase();
+        // If there is no filter show all saved guides.
+        if (!filter || filter === filterValue.toLowerCase()) {
+            return this.savedGuides;
+        }
+        // filter on titles and return the filtered array. 
+        var filtered = ko.utils.arrayFilter(this.savedGuides(), function (guide) {
+                return guide.title().substring(0, filter.length).toLowerCase() === filter;
+            });
+        return ko.observableArray(filtered);
+    },this);
+};
 
 /**
  * Push only new / unique items to the observableArray this prevents double items
@@ -107,7 +135,7 @@ GuideList.prototype.update = function (Lat, Lng, callback) {
         //coprimary: 'all',
         //info properties we want
         inprop:'url',
-        //rvprop:'content',
+        rvprop:'content',
         //pageimages properties
         pilimit: 'max',
         piprop : 'thumbnail',
@@ -130,12 +158,10 @@ GuideList.prototype.update = function (Lat, Lng, callback) {
                 // console.log(guideKeys.length);
                 // console.log(result);
                 for (var i = guideKeys.length - 1; i >= 0; i--) {
-                    // push only new/unique guides to the mapData ObservableArray.
-                    //consolelog((result.query.pages[guideKeys[i]]);
                     // check if this guide has been saved
                     var guide = new Guide(result.query.pages[guideKeys[i]]);
-                    var savedGuide;
-                    if ( (savedGuide = global.savedGuides.isSaved(guide) ) ) {
+                    var savedGuide = global.savedGuides.isSaved(guide);
+                    if ( savedGuide ) {
                         this.pushUniq(savedGuide, 'map');
                     } else {
                         this.pushUniq(guide, 'map');
@@ -158,54 +184,12 @@ GuideList.prototype.update = function (Lat, Lng, callback) {
     });
 };
 
-
-ko.components.register('guide-list', {
-    viewModel : GuideList,
-    template : require('../views/guide-list.html')
-});
-
-var SavedGuides = function () {
-    // The initial filter to prepopulate the input tag. 
-    // this value will be ignored when filtering. 
-    var filterValue = 'Filter';
-    this.filter = ko.observable(filterValue);
-    // get all saved guides from local storage
-    var savedGuides = JSON.parse(global.localStorage.getItem('guides')) || [];
-    // make an observableArray
-    this.savedGuides = ko.observableArray([]);
-    //push all saved items to the observable
-    for (var i = savedGuides.length - 1; i >= 0; i--) {
-        this.savedGuides.push(new Guide(savedGuides[i]));
-    }
-    this.filteredGuides = ko.computed(function () {
-        var filter = this.filter().toLowerCase();
-        // If there is no filter show all saved guides.
-        if (!filter || filter === filterValue.toLowerCase()) {
-            return this.savedGuides;
-        }
-        // filter on titles and return the filtered array. 
-        var filtered = ko.utils.arrayFilter(this.savedGuides(), function (guide) {
-                return guide.title().substring(0, filter.length).toLowerCase() === filter;
-            });
-        return ko.observableArray(filtered);
-    },this);
-};
-
-
-// SavedGuides.prototype.filter = function () {
-//     this.showGuidesGuides( ko.utils.arrayFilter(this.showGuides(), function (guide) {
-//         return  string.substring(0, startsWith.length) === startsWith;
-//     } ));
-// }
-
-SavedGuides.prototype.pushUniq = GuideList.prototype.pushUniq;
-
 /**
  * check if a guide is saved in loca
  * @param  {object}  newGuide the guide to be cecked
  * @return {object || false}  the guide that has been saved or boolean false
  */
-SavedGuides.prototype.isSaved = function(newGuide){
+GuideList.prototype.isSaved = function(newGuide){
     // returns true if newGuide is already in the array.
     var checkDuplicate = function(guideInArray){
         return guideInArray.title() === newGuide.title() ;
@@ -222,7 +206,7 @@ SavedGuides.prototype.isSaved = function(newGuide){
  * @param {guideObject} the guide that needs to be saved.
  * @return this 
  */
-SavedGuides.prototype.saveGuide = function(guide){
+GuideList.prototype.saveGuide = function(guide){
     // add the guide that needs to be saved to the saved guides array
     this.pushUniq(guide, 'saved');
     //get underlining array of observableArray
@@ -245,17 +229,17 @@ SavedGuides.prototype.saveGuide = function(guide){
 };
 
 ko.components.register('saved-guides', {
-    viewModel : SavedGuides,
+    viewModel : GuideList,
     template : require('../views/guide-list.html')
 });
 
 
-SavedGuides.init = function (params) {
+GuideList.init = function (params) {
     params = params || '';
     var el = global.document.createElement('div');
     el.innerHTML = require('../views/guide-list.html');
     //el.setAttribute('params', params);
-    var vm = new SavedGuides();
+    var vm = new GuideList();
     ko.applyBindings(vm , el);
     // make the savedGuides viewModel globally available.
     global.savedGuides = vm;
@@ -268,5 +252,5 @@ SavedGuides.init = function (params) {
 module.exports = {
     Guide : Guide,
     GuideList : GuideList,
-    SavedGuides : SavedGuides
+    // SavedGuides : SavedGuides
 };

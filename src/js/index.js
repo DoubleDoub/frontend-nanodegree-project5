@@ -3,7 +3,6 @@
 var ko = global.ko = require('../../bower_components/knockout/dist/knockout.js');
 var GuideModule = global.Guide = require ('./viewModels/guides');
 
-console.log(GuideModule);
 // map place holder
 var map;
 //initialize the app
@@ -24,12 +23,10 @@ function initMap() {
         center : new google.maps.LatLng(map.getCenter().lat(), map.getCenter().lng())
     });
     var f = window.document.getElementById('list');
-    var savedGuides = GuideModule.SavedGuides.init();
-    var savedGuidesViewModel = savedGuides.viewModel;
-    f.appendChild(savedGuides.view);
+    var guideList = GuideModule.GuideList.init();
+    var guideListViewModel = guideList.viewModel;
+    f.appendChild(guideList.view);
     
-    //var mapGuideList = new GuideModule.createObject();
-    var guideListViewModel = new GuideModule.GuideList();
 
     google.maps.event.addListener(map, 'center_changed', function(e){
         // only get new guides when the map is not being moved for a short period
@@ -86,7 +83,7 @@ var updateMarkers = function (error, guideList) {
         google.maps.event.addListener(marker, 'click', (function (marker) {
             return function () {
                 marker.infoWindow.open(map, marker);
-                // close infoWindow when clicked somewhere else on the map and get refencen to hander
+                // close infoWindow when clicked somewhere else on the map and get reference to hander
                 var clickHandler = google.maps.event.addListener(map, 'mousedown', function(e){
                     // close infoWindow
                     marker.infoWindow.close();
