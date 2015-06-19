@@ -1,5 +1,5 @@
-<div>
-    <span data-bind="text: title"></span>
-    <span data-bind="text: coordinates().lat"></span>
-    <!-- <span data-bind="text: "></span> -->
+<div data-bind="click: $parent.jumpTo()">
+    <span data-bind="text: $parent.title"></span>
+    <span data-bind="text: $parent.coordinates().lat"></span>
+   <!--  <span data-bind="visible: jumpTo, html : intro"></span> -->
 </div>

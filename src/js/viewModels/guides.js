@@ -7,7 +7,7 @@ var $ = require('jquery');
  * @return {object} guide instance
  */
 var Guide = function (guide) {
-    // keep the raw data, so that we can use it to save guides and reinstanciate
+    // keep the raw data as models, so that we can use it to save guides and reinstanciate
     //  them as viewmodels later. 
     this.raw = guide;
     this.title = ko.observable(guide.title);
@@ -16,9 +16,12 @@ var Guide = function (guide) {
     this.intro = ko.observable(guide.extract);
     //saved prop is not present on all guides thus defaults to false
     this.saved = ko.observable(guide.saved || false);
+    //jumpTo changes hasFocus value to this.coordinates
+    // map will register on change events of this property.
+    this.hasFocus = ko.observable(false);
+    //placeholder for reference to marker
+    this.marker = ko.observable(false);
 };
-
-
 /**
  * Save the guide to localStorage. 
  * @return {[type]} [description]
@@ -30,12 +33,27 @@ Guide.prototype.saveGuide = function(){
     // prevent saving duplicate guides in localStorage
     if (this.saved()){
         // guide is already saved
+        console.log('already saved');
         return this;
     }
     global.savedGuides.saveGuide(this);
 
     return this;
 };
+
+/**
+ * triggers hasFocus change event. 
+ * @return {[type]} [description]
+ */
+Guide.prototype.jumpTo = function(){
+    // knockout always excute this area on execution. I don't want any effects
+    // return another function with the viewModel ($parent) as context => this
+    return function (){
+        // trigger change on has focus. Listenerers will react.
+        this.hasFocus(this.coordinates());
+    }.bind(this);
+};
+
 
 ko.components.register('guide', {
     template : require('../views/guide.html')
@@ -152,8 +170,7 @@ GuideList.prototype.update = function (Lat, Lng, callback) {
         success: function(result) {
             // check if we actually got some data surrounding given area
             if ('query' in result &&'pages' in result.query) {
-                var guideKeys = Object.keys(result.query.pages);
-                //@Todo figure out what to do about results without extractinfo
+                var guideKeys = Object.keys(result.query.pages); //@Todo figure out what to do about results without extractinfo
                 // because of limits on properties of wikivoyage api 
                 // console.log(guideKeys.length);
                 // console.log(result);
@@ -168,10 +185,10 @@ GuideList.prototype.update = function (Lat, Lng, callback) {
                     }
                         guide = null;
                 }
-                return callback(null, this.mapData);
+                return callback(null, this.mapData());
             } else {
                 // wikivoyage did not have any data for these coordinates
-                return callback('No data in this area', this.mapData);
+                return callback('No data in this area', this.mapData());
             }
         }.bind(this),
         error: function(jqxhr, status, error){
@@ -242,6 +259,7 @@ GuideList.init = function (params) {
     var vm = new GuideList();
     ko.applyBindings(vm , el);
     // make the savedGuides viewModel globally available.
+    // @todo dont do this
     global.savedGuides = vm;
 
     // return reference to the newly created PlaceListViewModel and element(view)
