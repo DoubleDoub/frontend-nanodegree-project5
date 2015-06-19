@@ -25,7 +25,8 @@ body, html {
     padding 0
     background-color beige
     height 100%
-    // full-screen()
+    //full-screen()
+    overflow hidden
 }
 
 ul {
@@ -100,22 +101,23 @@ footer {
     .list {
         //display none
         width 0%
-        transform translateX(-499px)
-        transition translateX 0.5s ease
+        // transform translateX(-499px)
+        transition translate, width 0.5s ease
+        overflow hidden
     }
     .list.list-active { 
         width 100%
-        transform translateX(0px)
+        // transform translateX(0px)
     }
     .map {
         width 100%
-        tranform translateX (499px)
-        transition translateX 0.5s ease
+        // tranform translateX (499px)
+        transition translate, width 0.5s ease
         
     }
     .map.list-active {
         width 0%
-        transform translateX(0px)
+        // transform translateX(0px)
     }
 }
 
@@ -166,7 +168,7 @@ footer {
 
 $notif-width = 50%
 .notification {
-    display none
+    //display none
     position absolute
     top $notif-width
     width $notif-width
@@ -175,6 +177,7 @@ $notif-width = 50%
     z-index $z-notification
     background-color red
     transition transform 0.2s
+    overflow hidden
 }
 
 .showNotification {
