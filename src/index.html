@@ -6,7 +6,7 @@
     <link rel="stylesheet" type="text/css" href="../dist/css/style.css">
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyCXx6uhfL-KLglmwlanpjhuVUDTWq-zQCI"></script>
     <script type="text/javascript" src="./js/bundle.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 </head>
 <body>
     <div class="notification" databind="css : cssClass }">
@@ -18,7 +18,7 @@
     <div class="app flex-container">
         <header>
             <nav>
-                <!-- <div class="hamburger-menu"></div> -->
+                <div class="hamburger-menu"></div>
                 <!-- <div class="search-bar">
                     <div class="search-icon">Search</div>
                 </div> -->
@@ -34,6 +34,22 @@
             <!-- <p>this is a footer</p> -->
         </footer>
     </div>
+<script type="text/javascript">
+    document.getElementsByClassName('hamburger-menu')[0].addEventListener('click', function (e) {
+        var listEl = document.getElementById('list');
+        var mapEl = document.getElementById('map');
+        if (e.target.classList.contains('list-active')){
+            listEl.classList.remove('list-active');
+            mapEl.classList.remove('list-active');
+            e.target.classList.remove('list-active');
+            return;
+        }
+        console.log(listEl);
+        listEl.classList.add('list-active');
+        mapEl.classList.add('list-active');
+        e.target.classList.add('list-active');
 
+    });
+</script>
 </body>
 </html> 
