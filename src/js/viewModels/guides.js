@@ -7,18 +7,17 @@ var $ = require('jquery');
  * @return {object} guide instance
  */
 var Guide = function (guide) {
-    // keep the raw data as models, so that we can use it to save guides and reinstanciate
-    //  them as viewmodels later. 
-    this.raw = guide;
+    // keep the model 
+    this.model = guide;
     this.title = ko.observable(guide.title);
     this.url = ko.observable(guide.fullurl);
     this.coordinates = ko.observable(guide.coordinates[0]);
     this.intro = ko.observable(guide.extract);
     //saved prop is not present on all guides thus defaults to false
     this.saved = ko.observable(guide.saved || false);
-    //jumpTo changes hasFocus value to this.coordinates
-    // map will register on change events of this property.
-    this.hasFocus = ko.observable(false);
+    //jumpTo changes triggers change event and gives this.coordinates
+    //google map will register on change events of this property.
+    this.triggerJump = ko.observable(false);
     //placeholder for reference to marker
     this.marker = ko.observable(false);
 };
@@ -26,14 +25,13 @@ var Guide = function (guide) {
  * Save the guide to localStorage. 
  * @return {[type]} [description]
  */
-Guide.prototype.saveGuide = function(){
+Guide.prototype.saveGuide = function() {
     if (!global.savedGuides){
         throw new Error('savedGuides has not been loaded');
     }
     // prevent saving duplicate guides in localStorage
     if (this.saved()){
-        // guide is already saved
-        console.log('already saved');
+        // guide is already saved);
         return this;
     }
     global.savedGuides.saveGuide(this);
@@ -41,49 +39,53 @@ Guide.prototype.saveGuide = function(){
     return this;
 };
 
-/**
- * triggers hasFocus change event. 
- * @return {[type]} [description]
- */
-Guide.prototype.jumpTo = function(){
-    // knockout always excute this area on execution. I don't want any effects
-    // return another function with the viewModel ($parent) as context => this
-    return function (){
-        // trigger change on has focus. Listenerers will react.
-        this.hasFocus(this.coordinates());
-    }.bind(this);
+Guide.prototype.deleteGuide = function() {
+    if (!global.savedGuides){
+        throw new Error('savedGuides has not been loaded');
+    }
+    global.savedGuides.deleteGuide(this);
 };
 
+/**
+ * triggers triggerJump change event. 
+ * @return {[type]} [description]
+ */
+Guide.prototype.jumpTo = function(vm, event) {
+    // // knockout always excute this area on execution. I don't want any effects
+    // // return another function with the viewModel ($parent) as context => this
+    // return function (vm, event){
+        // trigger change on has focus. Listenerers will react.
+        console.log(event.target);
+        console.log(vm);
 
-ko.components.register('guide', {
-    template : require('../views/guide.html')
-});
-
+        vm.triggerJump(vm.coordinates());
+    // }.bind(this);
+};
 
 
 var GuideList = function () {
     var guides = guides || [];
     //guides shown on the map
     this.mapData = ko.observableArray(guides);
-    
-    // The initial filter to prepopulate the input tag. 
-    // this value will be ignored when filtering. 
-    var filterValue = 'Filter';
-    this.filter = ko.observable(filterValue);
-    
+
     // get all saved guides from local storage
     var savedGuides = JSON.parse(global.localStorage.getItem('guides')) || [];
-    // make it an observableArray
+    // make an observableArray
     this.savedGuides = ko.observableArray([]);
     //push all saved items to the observable
     for (var i = savedGuides.length - 1; i >= 0; i--) {
         // we need them to be Guide Objects
         this.savedGuides.push(new Guide(savedGuides[i]));
     }
+    // The initial filter to prepopulate the input tag. 
+    // this value will be ignored when filtering. 
+    var InitialFilterValue = '';
+    this.filter = ko.observable(InitialFilterValue);
+    // guides that are filtered
     this.filteredGuides = ko.computed(function () {
         var filter = this.filter().toLowerCase();
-        // If there is no filter show all saved guides.
-        if (!filter || filter === filterValue.toLowerCase()) {
+        // If there is no filter return all saved guides.
+        if (!filter || filter === InitialFilterValue.toLowerCase()) {
             return this.savedGuides;
         }
         // filter on titles and return the filtered array. 
@@ -91,6 +93,15 @@ var GuideList = function () {
                 return guide.title().substring(0, filter.length).toLowerCase() === filter;
             });
         return ko.observableArray(filtered);
+    },this);
+
+    this.suggestComplete = ko.computed(function(){
+        var guide = this.filteredGuides()()[0];
+        if (guide && guide.title() && this.filter() !== InitialFilterValue){
+            var title = this.filteredGuides()()[0].title();
+            return this.filter() + title.substring(this.filter().length);
+        }
+        return '';
     },this);
 };
 
@@ -202,7 +213,7 @@ GuideList.prototype.update = function (Lat, Lng, callback) {
 };
 
 /**
- * check if a guide is saved in loca
+ * check if a guide is saved in local storage
  * @param  {object}  newGuide the guide to be cecked
  * @return {object || false}  the guide that has been saved or boolean false
  */
@@ -221,52 +232,100 @@ GuideList.prototype.isSaved = function(newGuide){
 /**
  * Save a guide to localStorage.
  * @param {guideObject} the guide that needs to be saved.
- * @return this 
  */
-GuideList.prototype.saveGuide = function(guide){
+GuideList.prototype.saveGuide = function(guide) {
     // add the guide that needs to be saved to the saved guides array
     this.pushUniq(guide, 'saved');
     //get underlining array of observableArray
     var saved = this.savedGuides();
-    // storage for the data that needs to be saved
+    // storage for the guides that needs to be saved
     var toBeSaved = [];
     for (var i = saved.length - 1; i >= 0; i--) {
-        // add saved property to raw data
-        saved[i].raw.saved = true;
-        // only save the raw data so that it can be reused in Guide constructor
-        toBeSaved.push(saved[i].raw);
+        // add saved property to the model
+        saved[i].model.saved = true;
+        // only save the model data
+        toBeSaved.push(saved[i].model);
     }
     // make it json string and save to localStorage
     global.localStorage.setItem('guides', JSON.stringify(toBeSaved));
 
     // tell the guide it has been saved. 
     guide.saved(true);
-
-    return this;
 };
 
-ko.components.register('saved-guides', {
-    viewModel : GuideList,
-    template : require('../views/guide-list.html')
-});
+/**
+ * Deletes a guide from locat
+ * @param  {guieObject} guide the guide that needs to be deleteGuide
+ * @return {void}
+ */
+GuideList.prototype.deleteGuide = function(guide) {
+    //let the guide know that it has been deleted
+    guide.saved('false');
+    this.savedGuides.remove(guide);
+    // storage for the guides that needs to be saved
+    var toBeSaved = [];
+    for (var i = this.savedGuides().length - 1; i >= 0; i--) {
+        // add saved property to the model
+        this.savedGuides[i].model.saved = true;
+        // only save the model data
+        toBeSaved.push(saved[i].model);
+    }
+    // make the underlying savedGuides array a json string and save them to localStorage
+    global.localStorage.setItem('guides', JSON.stringify(this.savedGuides()));
+
+};
+
+/**
+ * Callback for keypress event on the search inputfield
+ * completes the string in the search input field. On keypress
+ * @return {[type]} [description]
+ */
+GuideList.prototype.autoComplete = function () {
+    // closure to remember what the previous location in the array was
+    var i = 0;
+    return function(vm, event) {
+        //only complete when the keypressed is the downkey
+        console.log(event.keyCode);
+        switch(event.keyCode) {
+            //right arrow pressed
+            case (39):
+                //user has chosen reset
+                i = 0;
+                //vm.suggestComplete(vm.filteredGuides()()[i].title());
+                vm.filter(vm.suggestComplete());
+                break;
+            //down arrow pressed
+            case(40):
+                i +=1;
+                vm.filter(vm.savedGuides()[i].title());
+                vm.triggerJump(vm.savedGuides()[i].coordinates());
+                break;
+                //return false;
+        }
+        if (event.keyCode === 39){
+        }
+        // allow default action to occur because we want the inputfield to get updated
+        // with the character
+        return true;
+    };
+}();
 
 
 GuideList.init = function (params) {
     params = params || '';
     var el = global.document.createElement('div');
     el.innerHTML = require('../views/guide-list.html');
-    //el.setAttribute('params', params);
     var vm = new GuideList();
     ko.applyBindings(vm , el);
     // make the savedGuides viewModel globally available.
-    // @todo dont do this
+    // @todo maybe dont do this
     global.savedGuides = vm;
 
     // return reference to the newly created PlaceListViewModel and element(view)
     return { 'view' : el , 'viewModel' : vm };
 };
 
-
+this.cool ='cool';
 module.exports = {
     Guide : Guide,
     GuideList : GuideList,

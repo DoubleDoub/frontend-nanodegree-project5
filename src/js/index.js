@@ -8,16 +8,27 @@ var map;
 // array to hold all map markers
 var markers = [];
 var openInfoWindows = [];
+var centerChangeMarkerHandler;
+
+
+
+    
+    var guideList = GuideModule.GuideList.init();
+    var guideListViewModel = guideList.viewModel;
+    
 
 
 //initializes the app
 function initMap() {
     // init map
     // document.getElementById('map').style.height = document.getElementsByTagName('main')[0].clientHeight + 'px';
+    // 
+    var f = window.document.getElementById('list');
+    f.appendChild(guideList.view);
 
     var mapOptions = {
-        zoom : 8,
-        center : new google.maps.LatLng(-34.397, 150.644)
+        zoom : 1,
+        center : new google.maps.LatLng(0, 0)
     };
     map = new google.maps.Map(document.getElementById('map'), mapOptions);
 
@@ -28,58 +39,25 @@ function initMap() {
         center : new google.maps.LatLng(map.getCenter().lat(), map.getCenter().lng())
     });
 
-    var f = window.document.getElementById('list');
-    var guideList = GuideModule.GuideList.init();
-    var guideListViewModel = guideList.viewModel;
-    f.appendChild(guideList.view);
-
-    // tell jshint to ignore function in loop warning
-    /* jshint -W083 */
     for (var i = guideListViewModel.savedGuides().length - 1; i >= 0; i--) {
 
         var guide = guideListViewModel.savedGuides()[i];
-
-        guideListViewModel.savedGuides()[i].hasFocus.subscribe(function(){
-            if (!this.hasFocus()) {
-                console.log('balls');
-                // start listening again when hasFocus is falsy
-                google.maps.event.addListener(map, 'center_changed', centerChangeMarkers);
-                return;
-            }
-            //console.log(this.hasFocus());
-            // stop adding markers when moving the map center.
-            google.maps.event.removeListener(centerChangeMarkerHandler);
-            // change center of the map
-            map.panTo(new google.maps.LatLng( this.coordinates().lat, this.coordinates().lon));
-
-            // use the viewModel as the context
-        }.bind(guideListViewModel.savedGuides()[i]));
+        // 
+        guideListViewModel.savedGuides()[i].triggerJump.subscribe(mapJump.bind(guideListViewModel.savedGuides()[i]));
     }
-    //tell jshint to start warning again.
-    /* jshint +W083 */
+
 
      //register eventlistener when user filters on savedGuides
     // remove markers from the map and only show the filterd ones
     guideListViewModel.filteredGuides.subscribe(function(data){
-        console.log('deleting all markers');
         deleteAllMarkers();
         createMarkers(null, data());
         
     }.bind(guideListViewModel));
 
-    // updates markers on the map.
-    var centerChangeMarkers = function(e){
-        // only get new guides when the map is not being moved for a short period
-        var previousCoordinates = map.getCenter();
-        global.setTimeout(function () {
-                if (previousCoordinates === map.getCenter()){
-                    // update guides data then updata markers on the map
-                    guideListViewModel.update(map.getCenter().lat(), map.getCenter().lng(), createMarkers);
-                }
-        },200);
-    };
+
     // change marker handler
-    var centerChangeMarkerHandler = google.maps.event.addListener(map, 'center_changed', centerChangeMarkers);
+    centerChangeMarkerHandler = google.maps.event.addListener(map, 'center_changed', centerChangeMarkers);
 
     // keep the circle in the center when the center of the map changes
     google.maps.event.addListener(map, 'center_changed', function(e){
@@ -146,16 +124,18 @@ var createMarkers = function (error, guideList) {
         /* jshint -W083 */
         // start listening for change events of the saved property
         guide.saved.subscribe(function (guide){
-            //@ param saved the new value of guide.saved given by knockout
+            //@ param saved the new value of guide.saved given by knockout observable
             return function(saved) {
                 if (saved) {
                     // give the marker an icon for saved guides
                     guide.marker().setIcon(savedIcon);
                     // markers in the marker store is the same refence as guide.marker()
                     //console.log(markers[markers.indexOf(guide.marker())] === guide.marker()); // true
+                    // start listening for jump event
+                    guide.triggerJump.subscribe(mapJump.bind(guide));
                 }
             };
-        //create closure to keep right reference for guide in the loop
+        //create closure to keep correct reference for guide in the loop
         }(guide));
 
         google.maps.event.addListener(marker, 'click', (function (marker) {
@@ -177,13 +157,45 @@ var createMarkers = function (error, guideList) {
 
 
             };
-        //create closure to keep right reference for marker in the loop
+        //create closure to keep correct reference for marker in the loop
         })(marker));
         //tell jshint to start warning again.
         /* jshint +W083 */
     }
 };
 
+/**
+ * eventListener for when guide viewModel triggerJump change event is fired
+ * makes the center of the map move to its location. 
+ * Is to be used with the context of the guide ViewModel by .bind(viewModel)
+ */
+var mapJump = function(){
+    // if (!this.triggerJump()) {
+    //     // start listening again when triggerJump is falsy
+    //     google.maps.event.addListener(map, 'center_changed', centerChangeMarkers);
+    //     return;
+    // }
+    // stop adding markers when moving the map center.
+    // @todo maybe dont do this?????
+    //google.maps.event.removeListener(centerChangeMarkerHandler);
+    // change center of the map
+    map.panTo(new google.maps.LatLng( this.coordinates().lat, this.coordinates().lon));
+    map.setZoom(12);
+
+    // dont forget to use the viewModel as the context
+};
+
+// updates markers on the map.
+var centerChangeMarkers = function(e){
+    // only get new guides when the map is not being moved for a short period
+    var previousCoordinates = map.getCenter();
+    global.setTimeout(function () {
+            if (previousCoordinates === map.getCenter()){
+                // update guides data then updata markers on the map
+                guideListViewModel.update(map.getCenter().lat(), map.getCenter().lng(), createMarkers);
+            }
+    },200);
+};
 
 //https://developers.google.com/maps/documentation/javascript/examples/marker-remove
 // Sets the map on all markers in the array.

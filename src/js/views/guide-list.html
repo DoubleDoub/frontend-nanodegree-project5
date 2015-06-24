@@ -1,6 +1,43 @@
-<input type="text" data-bind="textInput: filter">
-<div data-bind="text : filter"></div>
+<style type="text/css">
+    /*http://stackoverflow.com/questions/10795843/how-to-implement-a-google-suggest-like-input-field*/
+
+    .search {
+        position: relative;
+        height : 1em
+    }
+    #search {
+        position: absolute;
+        top : 0;
+        left: 0;
+        z-index: 11;
+        background : transparent;
+    }
+    #autoComplete {
+        position: absolute;
+        top : 0;
+        left: 0;
+        z-index: 10;
+        background-color : white;
+
+    }
+</style>
+<div class="search">
+    <input id="autoComplete" disabled="disabled" data-bind="textInput : suggestComplete" >
+    <input id="search" list="test" type="text" data-bind="textInput: filter, event: { keydown : autoComplete }">
+<datalist id="test" data-bind="foreach: filteredGuides()">
+    <option data-bind="value: $data.title"></option>
+</datalist>
+</div>
 <div data-bind="foreach: filteredGuides()">
-    <!-- use component binding -->
-    <guide ></guide>
+    <!-- $data is an instance of Guide -->
+   <div class= "savedGuide" data-bind="click: $data.jumpTo">
+    <h3 data-bind="text: $data.title"></h3>
+    <div class="GuideControl">
+        <i class="" data-bind="click: function(vm){ window.open(vm.url())} ,clickBubble: false">View</i>
+        <i class=""data-bind="click: $data.deleteGuide ,clickBubble: false">Remove</i>
+    </div>
+    <p class="guideIntro" data-bind="html : $data.model.extract"></p>
+
+   <!--  <span data-bind="visible: jumpTo, html : intro"></span> -->
+<!-- </div> -->
 </div>

@@ -55,8 +55,8 @@ nav.open {
 }
 
 .app {
-    min-height 100%
     full-screen()
+    height 100%
     z-index z-app
 }
 .flex-container {
@@ -66,48 +66,36 @@ nav.open {
 header {
     height 10%
     background-color red
-    // flex-grow 1
 }
 
 main {
     flex-container(row, stretch, flex-start, wrap)
     height 80%
-    // flex 1 1 auto
-    // margin-bottom 1px
+
 
 }
 .map {
     height 100%
-    // flex 1 1 auto
-    // position relative
-    // top 0
-    // right 0
-    // bottom 0
-    // left 0
-    //full-screen()
-    // width 500px
-    // flex-grow 3
 }
 
 footer {
-    // flex 1 1 auto
     height 10%
     background-color lime
-    overflow auto
-    // padding-right: 15px;
+}
+
+.list {
+        background-color yellow
+        overflow auto
 }
 
 @media screen and (max-width : 499px) {
     .list {
-        //display none
         width 0%
-        // transform translateX(-499px)
+        //transform translateX(-499px)
         transition translate, width 0.5s ease
-        overflow hidden
     }
-    .list.list-active { 
+    .list.list-active {
         width 100%
-        // transform translateX(0px)
     }
     .map {
         width 100%
@@ -128,12 +116,9 @@ footer {
     
     .list {
         width 50%
-        background-color yellow
-        display inline-block
     }
     .map {
         width 50%
-        display inline-block
     }
 }
 
