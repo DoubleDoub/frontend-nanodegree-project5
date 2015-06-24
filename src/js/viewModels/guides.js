@@ -51,15 +51,7 @@ Guide.prototype.deleteGuide = function() {
  * @return {[type]} [description]
  */
 Guide.prototype.jumpTo = function(vm, event) {
-    // // knockout always excute this area on execution. I don't want any effects
-    // // return another function with the viewModel ($parent) as context => this
-    // return function (vm, event){
-        // trigger change on has focus. Listenerers will react.
-        console.log(event.target);
-        console.log(vm);
-
         vm.triggerJump(vm.coordinates());
-    // }.bind(this);
 };
 
 
@@ -183,8 +175,6 @@ GuideList.prototype.update = function (Lat, Lng, callback) {
             if ('query' in result &&'pages' in result.query) {
                 var guideKeys = Object.keys(result.query.pages); //@Todo figure out what to do about results without extractinfo
                 // because of limits on properties of wikivoyage api 
-                // console.log(guideKeys.length);
-                // console.log(result);
                 for (var i = guideKeys.length - 1; i >= 0; i--) {
                     // check if this guide has been saved
                     var guide = new Guide(result.query.pages[guideKeys[i]]);

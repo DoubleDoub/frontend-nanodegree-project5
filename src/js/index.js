@@ -118,7 +118,6 @@ var createMarkers = function (error, guideList) {
         markers.push(marker);
         // give the guide viewModel a reference to the same marker
         guide.marker(marker);
-        //console.log(guide.marker);
 
         // tell jshint to ignore function in loop warning
         /* jshint -W083 */
@@ -256,7 +255,7 @@ function initNotificationUI(){
         this.message(String(notification));
         this.type(String(type));
         this.toggle();
-        console.log(this);
+
     };
 
     /**
