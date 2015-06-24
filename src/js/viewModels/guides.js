@@ -256,7 +256,7 @@ GuideList.prototype.deleteGuide = function(guide) {
     var toBeSaved = [];
     for (var i = this.savedGuides().length - 1; i >= 0; i--) {
         // add saved property to the model
-        this.savedGuides[i].model.saved = true;
+        this.savedGuides[i].model.saved('false');
         // only save the model data
         toBeSaved.push(saved[i].model);
     }
