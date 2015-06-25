@@ -161,8 +161,7 @@ var createMarkers = function (error, guideList) {
         //tell jshint to start warning again.
         /* jshint +W083 */
     }
-    console.log(markers.length);
-    console.log(guideList.length);
+
 
 };
 
@@ -207,7 +206,7 @@ var setAllMap = function(map, guideList) {
     }
     if (map === null){
         for (var ii = guideList.length - 1; ii >= 0; ii--) {
-            console.log(guideList[ii].marker());
+            //console.log(guideList[ii].marker());
             guideList[ii].marker('false');
         }
     }
