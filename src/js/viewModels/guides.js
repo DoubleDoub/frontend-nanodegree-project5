@@ -250,18 +250,18 @@ GuideList.prototype.saveGuide = function(guide) {
  */
 GuideList.prototype.deleteGuide = function(guide) {
     //let the guide know that it has been deleted
-    guide.saved('false');
+    guide.saved(false);
     this.savedGuides.remove(guide);
     // storage for the guides that needs to be saved
     var toBeSaved = [];
     for (var i = this.savedGuides().length - 1; i >= 0; i--) {
         // add saved property to the model
-        this.savedGuides[i].model.saved('false');
+        this.savedGuides()[i].model.saved = false;
         // only save the model data
-        toBeSaved.push(saved[i].model);
+        toBeSaved.push(this.savedGuides()[i].model);
     }
     // make the underlying savedGuides array a json string and save them to localStorage
-    global.localStorage.setItem('guides', JSON.stringify(this.savedGuides()));
+    global.localStorage.setItem('guides', JSON.stringify(toBeSaved));
 
 };
 
@@ -279,18 +279,16 @@ GuideList.prototype.autoComplete = function () {
         console.log(i);
         console.log(vm.savedGuides().length);
         switch(event.keyCode) {
-            //upp arrow pressed
+            //up arrow pressed
             case (38):
                 //user is going back in the array
                 i -= 1;
                 if(i < 0) {
-                    console.log('i = ' + i);
                     // i can't be lower then array length. Start at the back again.
                     i = vm.savedGuides().length -1;
-                    console.log('i = ' + i);
                 }
                 //vm.suggestComplete(vm.filteredGuides()()[i].title());
-                vm.filter(vm.suggestComplete());
+                vm.filter(vm.savedGuides()[i].title());
                 vm.savedGuides()[i].triggerJump(vm.savedGuides()[i].coordinates());
                 break;
             //right arrow pressed
@@ -304,7 +302,7 @@ GuideList.prototype.autoComplete = function () {
             //down arrow pressed
             case(40):
                 i +=1;
-                if (i === vm.savedGuides().length -1){
+                if (i > vm.savedGuides().length -1 ){
                     // i cant be longer then the Array if so we made a roundtrip 
                     i = 0;
                 }

@@ -132,6 +132,8 @@ var createMarkers = function (error, guideList) {
                     //console.log(markers[markers.indexOf(guide.marker())] === guide.marker()); // true
                     // start listening for jump event
                     guide.triggerJump.subscribe(mapJump.bind(guide));
+                } else if (!saved){
+                    guide.marker().setIcon(null);
                 }
             };
         //create closure to keep correct reference for guide in the loop
