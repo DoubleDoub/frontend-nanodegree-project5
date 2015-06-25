@@ -15,7 +15,7 @@ var Guide = function (guide) {
     this.intro = ko.observable(guide.extract);
     //saved prop is not present on all guides thus defaults to false
     this.saved = ko.observable(guide.saved || false);
-    //jumpTo changes triggers change event and gives this.coordinates
+    //jumpTo changes triggers change event and gives this.coordinates()
     //google map will register on change events of this property.
     this.triggerJump = ko.observable(false);
     //placeholder for reference to marker
@@ -276,19 +276,40 @@ GuideList.prototype.autoComplete = function () {
     return function(vm, event) {
         //only complete when the keypressed is the downkey
         console.log(event.keyCode);
+        console.log(i);
+        console.log(vm.savedGuides().length);
         switch(event.keyCode) {
-            //right arrow pressed
-            case (39):
-                //user has chosen reset
-                i = 0;
+            //upp arrow pressed
+            case (38):
+                //user is going back in the array
+                i -= 1;
+                if(i < 0) {
+                    console.log('i = ' + i);
+                    // i can't be lower then array length. Start at the back again.
+                    i = vm.savedGuides().length -1;
+                    console.log('i = ' + i);
+                }
                 //vm.suggestComplete(vm.filteredGuides()()[i].title());
                 vm.filter(vm.suggestComplete());
+                vm.savedGuides()[i].triggerJump(vm.savedGuides()[i].coordinates());
+                break;
+            //right arrow pressed
+            case (39):
+                //vm.suggestComplete(vm.filteredGuides()()[i].title());
+                vm.filter(vm.suggestComplete());
+                vm.savedGuides()[i].triggerJump(vm.savedGuides()[i].coordinates());
+                //user has chosen reset i
+                i = 0;
                 break;
             //down arrow pressed
             case(40):
                 i +=1;
+                if (i === vm.savedGuides().length -1){
+                    // i cant be longer then the Array if so we made a roundtrip 
+                    i = 0;
+                }
                 vm.filter(vm.savedGuides()[i].title());
-                vm.triggerJump(vm.savedGuides()[i].coordinates());
+                vm.savedGuides()[i].triggerJump(vm.savedGuides()[i].coordinates());
                 break;
                 //return false;
         }
