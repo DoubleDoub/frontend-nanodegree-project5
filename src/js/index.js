@@ -84,7 +84,10 @@ var createMarkers = function (error, guideList) {
 
     for (var i = guideList.length - 1; i >= 0; i--) {
         var guide = guideList[i];
-        if (guideList[i].marker() && !guideList[i].saved()){
+        if (guideList[i].marker().map && !guideList[i].saved()){
+            // console.log(guideList[i].saved());
+            // console.log(guideList[i].marker().map);
+            
             // it has already a marker so we can continue with the rest
             continue;
         }
@@ -131,6 +134,7 @@ var createMarkers = function (error, guideList) {
                     // markers in the marker store is the same refence as guide.marker()
                     //console.log(markers[markers.indexOf(guide.marker())] === guide.marker()); // true
                     // start listening for jump event
+                    // //@todo fix naming for this
                     guide.triggerJump.subscribe(mapJump.bind(guide));
                 } else if (!saved){
                     guide.marker().setIcon(null);
@@ -173,6 +177,7 @@ var createMarkers = function (error, guideList) {
  * Is to be used with the context of the guide ViewModel by .bind(viewModel)
  */
 var mapJump = function(){
+    map.setZoom(12);
     // if (!this.triggerJump()) {
     //     // start listening again when triggerJump is falsy
     //     google.maps.event.addListener(map, 'center_changed', centerChangeMarkers);
@@ -180,10 +185,21 @@ var mapJump = function(){
     // }
     // stop adding markers when moving the map center.
     // @todo maybe dont do this?????
-    //google.maps.event.removeListener(centerChangeMarkerHandler);
+    console.log(centerChangeMarkerHandler);
+    google.maps.event.removeListener(centerChangeMarkerHandler);
+    // first time the user moves center of map don't create new markers but
+    // tell map to start doing it again the next time.
+    var handler = google.maps.event.addListener(map, 'center_changed', function(){
+        // removing this functionality will introduce a bug
+        // saving a guide after filtering will remove all markers from the map
+        centerChangeMarkerHandler = google.maps.event.addListener(map, 'center_changed', centerChangeMarkers);
+        //only do this once.
+        google.maps.event.removeListener(handler);
+    });
+
     // change center of the map
     map.panTo(new google.maps.LatLng( this.coordinates().lat, this.coordinates().lon));
-    map.setZoom(12);
+    
 
     // dont forget to use the viewModel as the context
 };
@@ -209,7 +225,7 @@ var setAllMap = function(map, guideList) {
     if (map === null){
         for (var ii = guideList.length - 1; ii >= 0; ii--) {
             //console.log(guideList[ii].marker());
-            guideList[ii].marker('false');
+            guideList[ii].marker();
         }
     }
 };

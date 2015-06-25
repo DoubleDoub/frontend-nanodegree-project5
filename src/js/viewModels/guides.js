@@ -287,16 +287,25 @@ GuideList.prototype.autoComplete = function () {
                     // i can't be lower then array length. Start at the back again.
                     i = vm.savedGuides().length -1;
                 }
-                //vm.suggestComplete(vm.filteredGuides()()[i].title());
                 vm.filter(vm.savedGuides()[i].title());
                 vm.savedGuides()[i].triggerJump(vm.savedGuides()[i].coordinates());
                 break;
             //right arrow pressed
             case (39):
-                //vm.suggestComplete(vm.filteredGuides()()[i].title());
+            
                 vm.filter(vm.suggestComplete());
-                vm.savedGuides()[i].triggerJump(vm.savedGuides()[i].coordinates());
-                //user has chosen reset i
+                console.log(vm.suggestComplete());
+
+                for(var ii = vm.savedGuides().length -1; ii >= 0 ; ii-- ){
+  
+                    if (vm.savedGuides()[ii].title().toLowerCase() === vm.filter().toLowerCase() ){
+                        vm.savedGuides()[ii].triggerJump(vm.savedGuides()[ii].coordinates());
+                        i = 0;
+                        break;
+                    }
+                    console.log('not in array');
+                }
+                //user has chosen reset
                 i = 0;
                 break;
             //down arrow pressed
