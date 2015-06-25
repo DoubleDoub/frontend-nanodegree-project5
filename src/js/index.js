@@ -50,7 +50,7 @@ function initMap() {
      //register eventlistener when user filters on savedGuides
     // remove markers from the map and only show the filterd ones
     guideListViewModel.filteredGuides.subscribe(function(data){
-        deleteAllMarkers();
+        deleteAllMarkers(guideListViewModel.mapData());
         createMarkers(null, data());
         
     }.bind(guideListViewModel));
@@ -84,7 +84,7 @@ var createMarkers = function (error, guideList) {
 
     for (var i = guideList.length - 1; i >= 0; i--) {
         var guide = guideList[i];
-        if (guideList[i].marker()){
+        if (guideList[i].marker() && !guideList[i].saved()){
             // it has already a marker so we can continue with the rest
             continue;
         }
@@ -161,6 +161,9 @@ var createMarkers = function (error, guideList) {
         //tell jshint to start warning again.
         /* jshint +W083 */
     }
+    console.log(markers.length);
+    console.log(guideList.length);
+
 };
 
 /**
@@ -198,23 +201,29 @@ var centerChangeMarkers = function(e){
 
 //https://developers.google.com/maps/documentation/javascript/examples/marker-remove
 // Sets the map on all markers in the array.
-var setAllMap = function(map) {
+var setAllMap = function(map, guideList) {
     for (var i = 0; i < markers.length; i++) {
         markers[i].setMap(map);
+    }
+    if (map === null){
+        for (var ii = guideList.length - 1; ii >= 0; ii--) {
+            console.log(guideList[ii].marker());
+            guideList[ii].marker('false');
+        }
     }
 };
 
 // Deletes all markers in the array by removing references to them.
-global.deleteAllMarkers = function() {
-    clearMarkers();
+var deleteAllMarkers = function(guideList) {
+    clearMarkers(guideList);
     markers = [];
 };
 
-var showMarkers = function() {
-    setAllMap(map);
+var showMarkers = function(guideList) {
+    setAllMap(map, guideList);
 };
-var clearMarkers = function(){
-    setAllMap(null);
+var clearMarkers = function(guideList){
+    setAllMap(null,guideList);
 };
 
 /**
