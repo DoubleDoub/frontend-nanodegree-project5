@@ -140,30 +140,35 @@ var createMarkers = function (error, guideList) {
                     guide.marker().setIcon(null);
                 }
             };
-        //create closure to keep correct reference for guide in the loop
+        //create closure to keep correct reference for guide
         }(guide));
 
-        google.maps.event.addListener(marker, 'click', (function (marker) {
+        google.maps.event.addListener(guide.marker(), 'click', (function (guide) {
+
             return function () {
                 //close other openInfoWindows
                 for (var ii = openInfoWindows.length - 1; ii >= 0; ii--) {
                     openInfoWindows[ii].close();
                 }
-                marker.infoWindow.open(map, marker);
-                // keep track of open infoWindws
-                openInfoWindows.push(marker.infoWindow);
+                
+                guide.marker().infoWindow.open(map, guide.marker());
+                // keep track of open infoWindows
+                openInfoWindows.push(guide.marker().infoWindow);
+
+                //fetch instagram photos for the area near this guide
+                guide.fetchInstagramPhotos(guide);
                 // close infoWindow when clicked somewhere else on the map and get reference to hander
                 var clickHandler = google.maps.event.addListener(map, 'mousedown', function(e){
                     // close infoWindow
-                    marker.infoWindow.close();
-                    //remove listener to prevent leak
+                    guide.marker().infoWindow.close();
+                    //remove listener
                     google.maps.event.removeListener(clickHandler);
                 });
 
 
             };
-        //create closure to keep correct reference for marker in the loop
-        })(marker));
+        //create closure to keep correct reference for guide
+        })(guide));
         //tell jshint to start warning again.
         /* jshint +W083 */
     }
@@ -262,26 +267,55 @@ var createInfoWindow = function(data){
 };
 
 
-
+/**
+ * initializes the notification UI and exposes its api to the window object
+ * @return {void}
+ */
 function initNotificationUI(){
     var el = global.document.getElementsByClassName('notification')[0];
+
     var viewModel = {
-        type : ko.observable('Notification'),
-        message : ko.observable('Uhmmm I forgot..... Sorry!!'),
+        notificationWindowOpen : false,
+        messages : ko.observableArray([]),
         bttntxt : ko.observable('Ok whatever dude...')
     };
 
     /**
      * set message and show notification on screen
      * @param  {string} notification the message that is to be shown to the user
-     * @return {[type]}              [description]
+     * @param {sting} [header](optional) the Header uses for the notification  
+     * @return {void}
      */
-    viewModel.notify = function(notification, type){
-        type = type || this.type(); 
-        this.message(String(notification));
-        this.type(String(type));
-        this.toggle();
+    viewModel.notify = function(notification, header){
+        // this.messages.push(Object.create(Object.prototype,{
+        //     header :  {
+        //         value: header || 'Notification'
+        //     },
+        //     message: {
+        //         value: notification
+        //     }
+        // }));
+        // 
+        this.messages.push({message : notification, header : header});
+        console.log(this.messages());
 
+        if (this.notificationWindowOpen === false){
+            //show notification window
+            this.toggle();
+            this.notificationWindowOpen = true;
+        }
+    };
+
+    viewModel.reset = function(){
+        // make messages empty
+        this.messages([]);
+
+        if (this.notificationWindowOpen === true){
+            // hide notification window
+            this.toggle();
+            this.notificationWindowOpen = false;
+
+        }
     };
 
     /**

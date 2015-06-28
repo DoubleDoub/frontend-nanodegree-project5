@@ -20,6 +20,8 @@ var Guide = function (guide) {
     this.triggerJump = ko.observable(false);
     //placeholder for reference to marker
     this.marker = ko.observable(false);
+    // storage for data of instagramPhotos
+    this.instagramPhotos = ko.observableArray([]);
 };
 /**
  * Save the guide to localStorage. 
@@ -54,6 +56,32 @@ Guide.prototype.jumpTo = function(vm, event) {
         vm.triggerJump(vm.coordinates());
 };
 
+Guide.prototype.fetchInstagramPhotos = function(context) {
+    //https://api.instagram.com/v1/media/search?lat=48.858844&lng=2.294351&client_id=dcd60680c14142938a4ae89995e8e66b
+    var url = 'https://api.instagram.com/v1/media/search';
+    console.log('context');
+    console.log(context);
+    var req = {
+        lat : context.model.coordinates[0].lat,
+        lng : context.model.coordinates[0].lon,
+        client_id : 'dcd60680c14142938a4ae89995e8e66b'
+    };
+    $.ajax({
+        dataType : 'jsonp',
+        url : url,
+        data : req,
+        success : function (result, status, jqxhr) {
+            for (var i = result.data.length - 1; i >= 0; i--) {
+                this.instagramPhotos.push(result.data[i]);
+            }
+        }.bind(this),
+        error: function(jqxhr, status, error){
+            // Notify the user that there was a problem.
+            var message = 'Something went wrong while looking for Instagram photos';
+            global.notification.notify( message, 'Error');
+        },
+    });
+};
 
 var GuideList = function () {
     var guides = guides || [];
@@ -88,11 +116,15 @@ var GuideList = function () {
     },this);
 
     this.suggestComplete = ko.computed(function(){
+        //get first Item from filtered 
         var guide = this.filteredGuides()()[0];
+        //make sure all needed info is there and ignore the initial value
         if (guide && guide.title() && this.filter() !== InitialFilterValue){
+            // return suggestion for autoComplete
             var title = this.filteredGuides()()[0].title();
             return this.filter() + title.substring(this.filter().length);
         }
+        // if not just give empty string
         return '';
     },this);
 };
@@ -194,10 +226,8 @@ GuideList.prototype.update = function (Lat, Lng, callback) {
         }.bind(this),
         error: function(jqxhr, status, error){
             // Notify the user that there was a problem.
-            var message = 'Something went wrong';
-            message += status;
-            
-            global.notification.notify( message, 'connectionError');
+            var message = 'Something went wrong while looking for travel guides from Wikivoyage';
+            global.notification.notify( message, 'Error');
         }
     });
 };

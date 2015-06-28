@@ -10,12 +10,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 </head>
 <body>
-    <div class="notification" databind="css : cssClass }">
-        <p data-bind="text: type"></p>
-        <p data-bind="text: message"></p>
-        <button data-bind="text : bttntxt, click: toggle"></button>
+    <div class="notification" >
+        <div data-bind="foreach : messages()">
+            <h3 data-bind="text: $data.header"></h3>
+            <p data-bind="text: $data.message"></p>
+        </div>
+        <button data-bind="text : bttntxt, click: reset"></button>
     </div>
-    
     <div class="app flex-container">
         <header>
             <nav>
