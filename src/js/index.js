@@ -8,16 +8,13 @@ var notifications = require('./viewModels/notifications');
 var map;
 // array to hold all map markers
 var markers = [];
+// array to hold all open infoWindows
 var openInfoWindows = [];
+// ugly trick to get this handler in scope
 var centerChangeMarkerHandler;
 
-
-
-    
-    var guideList = GuideModule.GuideList.init();
-    var guideListViewModel = guideList.viewModel;
-    
-
+//initialize the guidelist 
+var guideList = GuideModule.GuideList.init();
 
 //initializes the app
 function initMap() {
@@ -40,21 +37,21 @@ function initMap() {
         center : new google.maps.LatLng(map.getCenter().lat(), map.getCenter().lng())
     });
 
-    for (var i = guideListViewModel.savedGuides().length - 1; i >= 0; i--) {
+    for (var i = guideList.viewModel.savedGuides().length - 1; i >= 0; i--) {
 
-        var guide = guideListViewModel.savedGuides()[i];
+        var guide = guideList.viewModel.savedGuides()[i];
         // 
-        guideListViewModel.savedGuides()[i].triggerJump.subscribe(mapJump.bind(guideListViewModel.savedGuides()[i]));
+        guideList.viewModel.savedGuides()[i].triggerJump.subscribe(mapJump.bind(guideList.viewModel.savedGuides()[i]));
     }
 
 
      //register eventlistener when user filters on savedGuides
     // remove markers from the map and only show the filterd ones
-    guideListViewModel.filteredGuides.subscribe(function(data){
-        deleteAllMarkers(guideListViewModel.mapData());
+    guideList.viewModel.filteredGuides.subscribe(function(data){
+        deleteAllMarkers(guideList.viewModel.mapData());
         createMarkers(null, data());
         
-    }.bind(guideListViewModel));
+    }.bind(guideList.viewModel));
 
 
     // change marker handler
@@ -66,7 +63,7 @@ function initMap() {
     });
 
     // Add markers from storage
-    createMarkers(null, guideListViewModel.savedGuides());
+    createMarkers(null, guideList.viewModel.savedGuides());
 }
 
 /**
@@ -217,7 +214,7 @@ var centerChangeMarkers = function(e){
     global.setTimeout(function () {
             if (previousCoordinates === map.getCenter()){
                 // update guides data then updata markers on the map
-                guideListViewModel.update(map.getCenter().lat(), map.getCenter().lng(), createMarkers);
+                guideList.viewModel.update(map.getCenter().lat(), map.getCenter().lng(), createMarkers);
             }
     },200);
 };
