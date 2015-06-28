@@ -2,6 +2,7 @@
 // console.log(global === window); //true
 var ko = global.ko = require('../../bower_components/knockout/dist/knockout.js');
 var GuideModule = global.Guide = require ('./viewModels/guides');
+var notifications = require('./viewModels/notifications');
 
 // map place holder
 var map;
@@ -267,73 +268,9 @@ var createInfoWindow = function(data){
 };
 
 
-/**
- * initializes the notification UI and exposes its api to the window object
- * @return {void}
- */
-function initNotificationUI(){
-    var el = global.document.getElementsByClassName('notification')[0];
-
-    var viewModel = {
-        notificationWindowOpen : false,
-        messages : ko.observableArray([]),
-        bttntxt : ko.observable('Ok whatever dude...')
-    };
-
-    /**
-     * set message and show notification on screen
-     * @param  {string} notification the message that is to be shown to the user
-     * @param {sting} [header](optional) the Header uses for the notification  
-     * @return {void}
-     */
-    viewModel.notify = function(notification, header){
-        // this.messages.push(Object.create(Object.prototype,{
-        //     header :  {
-        //         value: header || 'Notification'
-        //     },
-        //     message: {
-        //         value: notification
-        //     }
-        // }));
-        // 
-        this.messages.push({message : notification, header : header});
-        console.log(this.messages());
-
-        if (this.notificationWindowOpen === false){
-            //show notification window
-            this.toggle();
-            this.notificationWindowOpen = true;
-        }
-    };
-
-    viewModel.reset = function(){
-        // make messages empty
-        this.messages([]);
-
-        if (this.notificationWindowOpen === true){
-            // hide notification window
-            this.toggle();
-            this.notificationWindowOpen = false;
-
-        }
-    };
-
-    /**
-     * show notification on user screen
-     * @return {void}
-     */
-    viewModel.toggle = function(){
-        el.classList.toggle('showNotification');
-    };
-
-    ko.applyBindings(viewModel , el);
-    // expose as api to window/global
-    global.notification = viewModel;
-}
-
 var init = function (){
     initMap();
-    initNotificationUI();
+    notifications.initNotificationUI();
 };
 
 window.onload = init;
