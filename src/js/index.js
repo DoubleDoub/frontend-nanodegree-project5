@@ -62,7 +62,7 @@ function initMap() {
         circle.setCenter(new google.maps.LatLng(map.getCenter().lat(), map.getCenter().lng()));
     });
 
-    // Add markers from storage
+    // Add markers for saved guides in local storage
     createMarkers(null, guideList.viewModel.savedGuides());
 }
 
@@ -83,14 +83,15 @@ var createMarkers = function (error, guideList) {
     for (var i = guideList.length - 1; i >= 0; i--) {
         var guide = guideList[i];
         // we only need markers for guides without a
-        if (guideList[i].marker().map ){
-            // it has already a marker so we can continue with the rest
+        if (guideList[i].marker().map){
+            // it already has a marker so we can continue with the rest
+            // or the markers has a map.
             continue;
         }
         // create icon properties for saved guides
         var savedIcon ={
-                url : './css/sprite-navigation-white.png',
-                origin: new google.maps.Point(5, 39),
+                url : './css/sprite-maps-black.png',
+                origin: new google.maps.Point(141, 5),
                 size : new google.maps.Size(24, 24, 'px', 'px') 
         };
 
@@ -222,12 +223,6 @@ var centerChangeMarkers = function(e){
 var setAllMap = function(map, guideList) {
     for (var i = 0; i < markers.length; i++) {
         markers[i].setMap(map);
-    }
-    if (map === null){
-        for (var ii = guideList.length - 1; ii >= 0; ii--) {
-            //console.log(guideList[ii].marker());
-            guideList[ii].marker();
-        }
     }
 };
 

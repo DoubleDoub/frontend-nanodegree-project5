@@ -136,13 +136,13 @@ module.exports = function (grunt) {
                     // copy icons
                     expand : true,
                     cwd : 'bower_components/material-design-icons/sprites/css-sprite/',
-                    src : ['sprite-navigation-white.png'],
+                    src : ['sprite-navigation-black.png', 'sprite-maps-black.png', 'sprite-action-grey600.png'],
                     dest : 'dist/css'
                 },{
                     //copy css
                     expand : true,
                     cwd : 'bower_components/material-design-icons/sprites/css-sprite/',
-                    src : ['sprite-navigation-white.css'],
+                    src : ['sprite-navigation-black.css', 'sprite-maps-black.css','sprite-action-grey600.css'],
                     dest : 'dist/css'
                 }]
             },

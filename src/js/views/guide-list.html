@@ -3,25 +3,25 @@
 
     .search {
         position: relative;
-        height : 1em
     }
     #search {
         position: absolute;
         top : 0;
-        left: 0;
+        left: 36;
         z-index: 11;
         background : transparent;
     }
     #autoComplete {
         position: absolute;
         top : 0;
-        left: 0;
+        left: 36;
         z-index: 10;
         background-color : white;
 
     }
 </style>
 <div class="search">
+    <i class="icon icon-action-grey600 icon-action-grey600-ic_search_grey600_24dp"></i>
     <input id="autoComplete" disabled="disabled" data-bind="textInput : suggestComplete" >
     <input id="search" list="test" type="text" data-bind="textInput: filter, event: { keydown : autoComplete }">
 <datalist id="test" data-bind="foreach: filteredGuides()">
@@ -33,8 +33,8 @@
    <div class= "savedGuide" data-bind="click: $data.jumpTo">
     <h3 data-bind="text: $data.title"></h3>
     <div class="GuideControl">
-        <i class="" data-bind="click: function(vm){ window.open(vm.url())} ,clickBubble: false">View</i>
-        <i class=""data-bind="click: $data.deleteGuide ,clickBubble: false">Remove</i>
+        <i class="icon icon-action-grey600 icon-action-grey600-ic_language_grey600_24dp " data-bind="click: function(vm){ window.open(vm.url())} ,clickBubble: false"></i>
+        <i class="icon icon-action-grey600 icon-action-grey600-ic_delete_grey600_24dp"data-bind="click: $data.deleteGuide ,clickBubble: false"></i>
     </div>
     <p class="guideIntro" data-bind="html : $data.model.extract"></p>
 
