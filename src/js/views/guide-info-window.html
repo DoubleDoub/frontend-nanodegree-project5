@@ -1,21 +1,16 @@
-<style type="text/css">
-    .infoWindow {
-min-height: 300px;
-max-height: 300px;
-}
-</style>
+<!-- template for google map infoWindows -->
 <div class="infoWindow">
-<a target="_blank" data-bind="attr : { href : url}">Read More</a>
-<h2 data-bind="text : title"></h2>
-<div data-bind= "html : intro"></div>
-<a target="_blank" data-bind="attr : { href : url}">Read More</a>
-<div data-bind="text: saved"></div>
-<button data-bind="click : saveGuide">Save Guide</button>
-<h4>Photos</h4>
-<div data-bind=" visible :instagramPhotos().length <= 0">Loading Instagram photos from this area...</div>
-<div data-bind="visible : instagramPhotos().length > 0" >
-    <div data-bind="foreach: instagramPhotos">
-        <a target="_blank" data-bind="attr: { href: $data.link}"><img data-bind="attr: { src: $data.images.thumbnail.url}"></a>
+    <a target="_blank" data-bind="attr : { href : url}">Read More</a>
+    <h2 data-bind="text : title"></h2>
+    <div data-bind= "html : intro"></div>
+    <a target="_blank" data-bind="attr : { href : url}">Read More</a>
+    <div data-bind="text: saved"></div>
+    <button data-bind="click : saveGuide">Save Guide</button>
+    <h4>Photos</h4>
+    <div data-bind=" visible :instagramPhotos().length <= 0">Loading Instagram photos from this area...</div>
+    <div data-bind="visible : instagramPhotos().length > 0" >
+        <div data-bind="foreach: instagramPhotos">
+            <a target="_blank" data-bind="attr: { href: $data.link}"><img data-bind="attr: { src: $data.images.thumbnail.url}"></a>
+        </div>
     </div>
-</div>
 </div>

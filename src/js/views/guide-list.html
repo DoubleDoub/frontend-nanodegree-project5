@@ -1,32 +1,13 @@
-<style type="text/css">
-    /*http://stackoverflow.com/questions/10795843/how-to-implement-a-google-suggest-like-input-field*/
-    .search {
-        position: relative;
-        margin-left : 1rem;
-    }
-    #search {
-        position: absolute;
-        top : 0;
-        z-index: 11;
-        background : transparent;
-    }
-    #autoComplete {
-        position: absolute;
-        top : 0;
-        z-index: 10;
-        background-color : white;
-
-    }
-</style>
 <div class="search">
     <i class="icon icon-action-grey600 icon-action-grey600-ic_search_grey600_24dp"></i>
     <input id="autoComplete" disabled="disabled" data-bind="textInput : suggestComplete" >
     <input id="search" list="suggestions" type="text" data-bind="textInput: filter, event: { keydown : autoComplete }">
-<datalist id="suggestions" data-bind="foreach: filteredGuides()">
-    <option data-bind="value: $data.title"></option>
-</datalist>
+    <datalist id="suggestions" data-bind="foreach: filteredGuides()">
+        <option data-bind="value: $data.title"></option>
+    </datalist>
 </div>
-<div data-bind="foreach: filteredGuides()">
+
+<div class="savedGuides" data-bind="foreach: filteredGuides()">
     <!-- $data is an instance of Guide -->
    <div class= "savedGuide" data-bind="click: $data.jumpTo">
     <h3 data-bind="text: $data.title"></h3>
@@ -36,6 +17,4 @@
     </div>
     <p class="guideIntro" data-bind="html : $data.model.extract"></p>
 
-   <!--  <span data-bind="visible: jumpTo, html : intro"></span> -->
-<!-- </div> -->
 </div>

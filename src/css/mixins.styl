@@ -1,25 +1,44 @@
 /**
+* https://css-tricks.com/snippets/css/a-guide-to-flexbox/
 * Mixin for creating a flexbox flex-containter
 * @param direction establish main axis column || row
 * @param align alignment along cross axis flex-start || flex-end || center || 
 *        baseline || stretch
-* @param justify alingment along the main axis flex-start || flex-end ||
-*        center || space-between space-around
-* @param wrap(optional) wrap || nowrap || wrap-referse || nowrap  
+* @param justify defines the alignment along the main axis. It helps distribute extra
+*                free space left over when either all the flex items on a line are inflexible,
+*                or are flexible but have reached their maximum size. 
+*                flex-start || flex-end || center || space-between space-around
+* @param align-content aligns a flex container's lines within when there is 
+*                      extra space in the cross-axis, similar to how justify-content 
+*                      aligns individual items within the main-axis.
+* @param wrap(optional) wrap || nowrap || wrap-reverse || nowrap  
 **/
-flex-container(direction, align, justify, wrap=nowrap)
+flex-container(direction, align-items, justify, align-content, wrapp)
+    display -ms-flexbox
+    display -moz-flex
     display -webkit-flex
     display flex
+
     -webkit-flex-direction direction
     -ms-flex-direction direction
     flex-direction direction
-    -webkit-align-items align
-    -ms-align-items align
-    align-items align
+
+    -webkit-align-items align-items
+    -ms-align-items align-items
+    align-items align-items
+
+    -webkit-align-content align-content
+    -ms-align-content align-content
+    align-content align-content
+
     -webkit-justify-content justify
     -ms-justify-content justify
     justify-content justify
-    
+
+    -webkit-flex-wrap wrapp
+    -ms-flex-wrap wrapp
+    flex-wrap wrapp
+
 full-screen()
     position absolute
     top 0

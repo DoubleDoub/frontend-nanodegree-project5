@@ -1,6 +1,4 @@
 @import "mixins.styl"
-// @import "sprite-navigation-white.css"
-
 
 // variables
 //z-index 'namespacing'
@@ -25,7 +23,6 @@ body, html {
     padding 0
     background-color beige
     height 100%
-    //full-screen()
     overflow hidden
 }
 
@@ -34,42 +31,33 @@ ul {
     padding 0
 }
 
-nav {
-    positon absolute
-    top 0
-    //transform translateX(-300px)
-    transition transform 0.2s
-    //width 300px
-    margin 0
-    padding 0
-    background-color green
-}
-
-nav.open {
-    transform translateX(0px);
-}
-
-
-.search-bar { 
-    width 300px
-}
-
 .app {
     full-screen()
     height 100%
     z-index z-app
 }
-.flex-container {
-    flex-container(column, stretch, flex-start, wrap)
-}
 
 header {
     height 10%
     background-color red
+    flex-container(row, center, center, center, nowrap )
+}
+
+#menu-button {
+    font-size 48px
+    flex-grow 1
+}
+
+.logo {
+    flex-grow 2
+}
+
+.offset-1{
+    flex-grow 1
 }
 
 main {
-    flex-container(row, stretch, flex-start, wrap)
+    flex-container(row, stretch, flex-start, stretch, nowrap)
     height 80%
 
 
@@ -84,9 +72,11 @@ footer {
 }
 
 .list {
-    overflow auto
+    overflow hidden
 }
 
+//I can't get it to work with translatex. It is ok on width
+//@todo if I have some extra time try it again
 @media screen and (max-width : 499px) {
     .list {
         width 0%
@@ -95,6 +85,8 @@ footer {
     }
     .list.list-active {
         width 100%
+        overflow auto
+        
     }
     .map {
         width 100%
@@ -109,50 +101,20 @@ footer {
 }
 
 @media screen and (min-width : 500px) {
-    main {
-        flex-container(row, stretch, flex-start, wrap)
+    #menu-button {
+        display none
     }
-    
     .list {
         width 50%
+        overflow auto
     }
     .map {
         width 50%
     }
 }
 
-.hamburger-menu
-{
-    width:30px;
-    height:5px;
-    background-color:#111;
-    border-radius:5px;
-    position:relative;
-}
-
-.hamburger-menu:after, .hamburger-menu:before
-{
-    content: '';
-    width: 100%;
-    height:5px;
-    background-color:#111;
-    position:absolute;
-    border-radius:5px;
-}
-
-.hamburger-menu:after
-{
-    top:10px;
-}
-
-.hamburger-menu:before
-{
-    top:20px;
-}
-
 $notif-width = 50%
 .notification {
-    //display none
     position absolute
     top $notif-width
     width $notif-width
@@ -172,6 +134,10 @@ $notif-width = 50%
     display inline-block
 }
 
+.savedGuides {
+    // flex-container(row, center, center, center, wrap)
+}
+
 .savedGuide {
     margin-right 1rem
     margin-left 1rem
@@ -180,5 +146,31 @@ $notif-width = 50%
 }
 
 .guideControl {
-    //margin auto auto
+}
+
+/*http://stackoverflow.com/questions/10795843/how-to-implement-a-google-suggest-like-input-field*/
+.search {
+    position relative
+    margin-left 1rem
+}
+
+#search {
+    position: absolute
+    top 0
+    z-index 11
+    background transparent
+}
+
+#autoComplete {
+    position absolute
+    top 0
+    z-index 10
+    background-color white
+
+}
+
+.infoWindow {
+    //prevent infoWindow top from hiding behind
+    min-height 300px
+    max-height 300px
 }

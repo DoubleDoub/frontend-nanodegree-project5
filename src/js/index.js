@@ -40,7 +40,6 @@ function initMap() {
     for (var i = guideList.viewModel.savedGuides().length - 1; i >= 0; i--) {
 
         var guide = guideList.viewModel.savedGuides()[i];
-        // 
         guideList.viewModel.savedGuides()[i].triggerJump.subscribe(mapJump.bind(guideList.viewModel.savedGuides()[i]));
     }
 
@@ -83,7 +82,7 @@ var createMarkers = function (error, guideList) {
     for (var i = guideList.length - 1; i >= 0; i--) {
         var guide = guideList[i];
         // we only need markers for guides without a
-        if (guideList[i].marker().map){
+        if (guideList[i].marker().map) {
             // it already has a marker so we can continue with the rest
             // or the markers has a map.
             continue;
@@ -91,14 +90,11 @@ var createMarkers = function (error, guideList) {
         // create icon properties for saved guides
         var savedIcon ={
                 url : './css/sprite-maps-black.png',
-                origin: new google.maps.Point(141, 5),
+                origin: new google.maps.Point(175, 209),
                 size : new google.maps.Size(24, 24, 'px', 'px') 
         };
-            console.log(guideList[i].saved());
-            console.log(guideList[i].model.saved);
 
         if (guideList[i].saved()){
-            console.log(i);
             icon = savedIcon;
         } else {
             // use default google icons for unsaved guides
@@ -143,36 +139,39 @@ var createMarkers = function (error, guideList) {
         //create closure to keep correct reference for guide
         }(guide));
 
-        google.maps.event.addListener(guide.marker(), 'click', (function (guide) {
-
-            return function () {
-                //close other openInfoWindows
-                for (var ii = openInfoWindows.length - 1; ii >= 0; ii--) {
-                    openInfoWindows[ii].close();
-                }
-                
-                guide.marker().infoWindow.open(map, guide.marker());
-                // keep track of open infoWindows
-                openInfoWindows.push(guide.marker().infoWindow);
-
-                //fetch instagram photos for the area near this guide
-                guide.fetchInstagramPhotos(guide);
-                // close infoWindow when clicked somewhere else on the map and get reference to hander
-                var clickHandler = google.maps.event.addListener(map, 'mousedown', function(e){
-                    // close infoWindow
-                    guide.marker().infoWindow.close();
-                    //remove listener
-                    google.maps.event.removeListener(clickHandler);
-                });
-
-
-            };
-        //create closure to keep correct reference for guide
-        })(guide));
+        google.maps.event.addListener(guide.marker(), 'click', markerClickHandler(guide));
         //tell jshint to start warning again.
         /* jshint +W083 */
     }
 
+};
+
+/**
+ * creates a function that handles clicks on markers
+ * @param  {object} guide the guide that needs to do stuff
+ * @return {void}
+ */
+var markerClickHandler = function (guide){
+    return function() {
+        //close other openInfoWindows
+        for (var ii = openInfoWindows.length - 1; ii >= 0; ii--) {
+            openInfoWindows[ii].close();
+        }
+        
+        guide.marker().infoWindow.open(map, guide.marker());
+        // keep track of open infoWindows
+        openInfoWindows.push(guide.marker().infoWindow);
+
+        //fetch instagram photos for the area near this guide
+        guide.fetchInstagramPhotos(guide);
+        // close infoWindow when clicked somewhere else on the map and get reference to hander
+        var clickHandler = google.maps.event.addListener(map, 'mousedown', function(e){
+            // close infoWindow
+            guide.marker().infoWindow.close();
+            //remove listener
+            google.maps.event.removeListener(clickHandler);
+        });
+    };
 };
 
 /**
@@ -182,11 +181,6 @@ var createMarkers = function (error, guideList) {
  */
 var mapJump = function(){
     map.setZoom(12);
-    // if (!this.triggerJump()) {
-    //     // start listening again when triggerJump is falsy
-    //     google.maps.event.addListener(map, 'center_changed', centerChangeMarkers);
-    //     return;
-    // }
     // stop adding markers when moving the map center.
     // @todo maybe dont do this?????
     google.maps.event.removeListener(centerChangeMarkerHandler);
@@ -201,8 +195,11 @@ var mapJump = function(){
     });
 
     // change center of the map
-    map.panTo(new google.maps.LatLng( this.coordinates().lat, this.coordinates().lon));
-    
+    // map.panTo(new google.maps.LatLng( this.coordinates().lat, this.coordinates().lon));
+    // console.log('hola');
+    document.getElementById('menu-button').click();
+    // do the same stuff that happens when a marker gets clicked
+    markerClickHandler(this)();
 
     // dont forget to use the viewModel as the context
 };

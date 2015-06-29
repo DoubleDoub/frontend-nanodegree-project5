@@ -6,6 +6,8 @@
     <link rel="stylesheet" type="text/css" href="../dist/css/style.css">
     <link rel="stylesheet" type="text/css" href="../dist/css/sprite-action-grey600.css">
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyCXx6uhfL-KLglmwlanpjhuVUDTWq-zQCI"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
     <script type="text/javascript" src="./js/bundle.js"></script>
     <meta charset="UTF-8"> 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -18,15 +20,13 @@
         </div>
         <button data-bind="text : bttntxt, click: reset"></button>
     </div>
-    <div class="app flex-container">
+    <div class="app">
         <header>
-            <nav>
-                <div class="hamburger-menu"></div>
-                <!-- <div class="search-bar">
-                    <div class="search-icon">Search</div>
-                </div> -->
-            </nav>
-            <div class="logo"><img alt="My awesome Logo" /></div>
+            <div class="offset-1"></div>
+            <img class="logo" alt="My awesome Logo"/>
+            <div class="offset-1"></div>
+            <div class="offset-1"></div>
+            <i id="menu-button" class="large material-icons">menu</i>
         </header>
 
         <main>
@@ -38,7 +38,7 @@
         </footer>
     </div>
 <script type="text/javascript">
-    document.getElementsByClassName('hamburger-menu')[0].addEventListener('click', function (e) {
+    document.getElementById('menu-button').addEventListener('click', function (e) {
         var listEl = document.getElementById('list');
         var mapEl = document.getElementById('map');
         if (e.target.classList.contains('list-active')){

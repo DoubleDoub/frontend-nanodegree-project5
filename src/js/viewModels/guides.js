@@ -9,6 +9,8 @@ var $ = require('jquery');
 var Guide = function (guide) {
     // keep the model 
     this.model = guide;
+    // some of these don't need to be observables
+    // @todo if I have time fix this
     this.title = ko.observable(guide.title);
     this.url = ko.observable(guide.fullurl);
     this.coordinates = ko.observable(guide.coordinates[0]);
