@@ -82,10 +82,8 @@ var createMarkers = function (error, guideList) {
 
     for (var i = guideList.length - 1; i >= 0; i--) {
         var guide = guideList[i];
-        if (guideList[i].marker().map && !guideList[i].saved()){
-            // console.log(guideList[i].saved());
-            // console.log(guideList[i].marker().map);
-            
+        // we only need markers for guides without a
+        if (guideList[i].marker().map ){
             // it has already a marker so we can continue with the rest
             continue;
         }
@@ -170,7 +168,8 @@ var createMarkers = function (error, guideList) {
         //tell jshint to start warning again.
         /* jshint +W083 */
     }
-
+    console.log(guideList.length);
+    console.log(markers.length);
 
 };
 
@@ -188,7 +187,6 @@ var mapJump = function(){
     // }
     // stop adding markers when moving the map center.
     // @todo maybe dont do this?????
-    console.log(centerChangeMarkerHandler);
     google.maps.event.removeListener(centerChangeMarkerHandler);
     // first time the user moves center of map don't create new markers but
     // tell map to start doing it again the next time.

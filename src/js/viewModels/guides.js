@@ -304,10 +304,6 @@ GuideList.prototype.autoComplete = function () {
     // closure to remember what the previous location in the array was
     var i = 0;
     return function(vm, event) {
-        //only complete when the keypressed is the downkey
-        console.log(event.keyCode);
-        console.log(i);
-        console.log(vm.savedGuides().length);
         switch(event.keyCode) {
             //up arrow pressed
             case (38):
@@ -322,20 +318,16 @@ GuideList.prototype.autoComplete = function () {
                 break;
             //right arrow pressed
             case (39):
-            
+                // user has chosen => use the suggestion as filter
                 vm.filter(vm.suggestComplete());
-                console.log(vm.suggestComplete());
-
                 for(var ii = vm.savedGuides().length -1; ii >= 0 ; ii-- ){
-  
                     if (vm.savedGuides()[ii].title().toLowerCase() === vm.filter().toLowerCase() ){
                         vm.savedGuides()[ii].triggerJump(vm.savedGuides()[ii].coordinates());
                         i = 0;
                         break;
                     }
-                    console.log('not in array');
                 }
-                //user has chosen reset
+                //user has chosen reset i
                 i = 0;
                 break;
             //down arrow pressed
@@ -373,7 +365,6 @@ GuideList.init = function (params) {
     return { 'view' : el , 'viewModel' : vm };
 };
 
-this.cool ='cool';
 module.exports = {
     Guide : Guide,
     GuideList : GuideList,
