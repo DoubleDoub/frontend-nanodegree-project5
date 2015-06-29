@@ -3,12 +3,11 @@ module.exports = function (grunt) {
     "use strict";
     grunt.initConfig({
         clean : {
-            dist : ['dist']
+            dist : ['dist','tmp']
         },
         jshint: {
             files: ['Gruntfile.js', './src/js/**/*.js'],
             options: {}
-
         },
         watch: {
             options: {},
@@ -44,85 +43,19 @@ module.exports = function (grunt) {
                 src: ['./src/**/*.js', '!Gruntfile.js'],
                 // @TODO figure out if one file is the best way to go.
                 dest: './dist/js/bundle.js'
+            },
+            production: {
+                options : {
+
+                },
+                src: ['./src/**/*.js', '!Gruntfile.js'],
+                // @TODO figure out if one file is the best way to go.
+                dest: './tmp/js/bundle.js'
             }
         },
-        // resize images
-        // responsive_images : {
-        //     options: {
-        //         // use Image Magick as engine
-        //         engine: 'im',
-        //         overwrite: true
-        //     },
-            // jpg: {
-            //     // not selecting any files right now pizzeria.jpg is excluded
-            //     files : [{
-            //         expand : true,
-            //         cwd : 'src/views/images',
-            //         src : ['*.jpg', '!pizzeria.jpg'],
-            //         dest : 'tmp/views/images'
-            //     }]
-            // },
-            // png: {
-            //     // not selecting any files right now pizza.png is excluded
-            //     files : [{
-            //         expand : true,
-            //         cwd : 'src/views/images',
-            //         src : ['*.png', '!pizza.png'],
-            //         dest : 'tmp/views/images'
-            //     }]
-            // },
-            // target individual images
-            // other : {
-            //     options: {
-            //         sizes: [
-            //             {'name': 'large','width':'720px', 'height' : '540px'},
-            //             {'name': 'thumbnail','width':'100px'}
-            //             ]
-            //     },
-            //     files :{
-            //         'tmp/views/images/pizzeria.jpg' : 'src/views/images/pizzeria.jpg',
-            //     }
-            // }
-        // },
-        // optimize images
-        // imagemin : {
-        //     jpg : {
-        //         options : {
-        //             optimizationLevel: 3
-        //         },
-        //         files : [{
-        //             //Pizza view images
-        //             expand : true,
-        //             cwd : 'tmp/views/images',
-        //             src : ['*.jpg'],
-        //             dest : 'dist/views/images'
-        //         },
-        //         {   // root images
-        //             expand : true,
-        //             cwd : 'src/img',
-        //             src : ['*.{jpg,png}'],
-        //             dest : 'dist/img'
-        //         }]
-        //     },
-        //     png: {
-        //         options: {
-        //             optimizationLevel: 3
-        //         },
-        //         files: [{
-        //             //root images
-        //             expand: true,
-        //             cwd: 'tmp/img',
-        //             src: ['**/*.png'],
-        //             dest: 'dist/img'
-        //         },
-        //         {   //Pizza view images
-        //             expand : true,
-        //             cwd : 'tmp/views/images',
-        //             src : ['*.png'],
-        //             dest : 'dist/views/images'
-        //         }]
-        //    }
-        // },
+        uglify: {
+            './dist/js/bundle.js' : './tmp/js/bundle.js'
+        },
         inline : {
             //inline css in index.html
             index : {
@@ -183,9 +116,15 @@ module.exports = function (grunt) {
     });
 
 
-    grunt.registerTask('inlineCss', function(){
+    grunt.registerTask('inlineCssDev', function(){
         //make sure stylus did run
         this.requires('stylus:dev');
+        grunt.task.run('inline:index');
+    });
+
+    grunt.registerTask('inlineCssProd', function(){
+        //make sure stylus did run
+        this.requires('stylus:production');
         grunt.task.run('inline:index');
     });
 
@@ -215,9 +154,6 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-imagemin');
     //https://github.com/gruntjs/grunt-contrib-clean
     grunt.loadNpmTasks('grunt-contrib-clean');
-    // https://www.npmjs.com/package/grunt-responsive-images
-    //grunt.loadNpmTasks('grunt-responsive-images');
-
     // https://github.com/chyingp/grunt-inline
     grunt.loadNpmTasks('grunt-inline');
     //https://github.com/gruntjs/grunt-contrib-copy
@@ -228,9 +164,14 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
     //https://github.com/gruntjs/grunt-contrib-jshint
     grunt.loadNpmTasks('grunt-contrib-jshint');
+    // https://github.com/gruntjs/grunt-contrib-stylus
     grunt.loadNpmTasks('grunt-contrib-stylus');
+    // https://github.com/gruntjs/grunt-contrib-uglify
+    grunt.loadNpmTasks('grunt-contrib-uglify');
 
-    grunt.registerTask('dev', ['clean', 'jshint', 'browserify:dev',/*'responsive_images','imagemin',*/ 'copy', 'stylus:dev','inlineCss']);
+    grunt.registerTask('dev', ['clean', 'jshint', 'browserify:dev',/*'responsive_images','imagemin',*/ 'copy', 'stylus:dev','inlineCssDev']);
+    
+    grunt.registerTask('production', ['clean', 'jshint', 'browserify:production', 'uglify',/*'responsive_images','imagemin',*/ 'copy', 'stylus:production','inlineCssProd']);
 
     //grunt.registerTask('default', ['clean', 'jshint', 'browserify:dev', 'stylus:dev', 'inlineCss' ]);
 

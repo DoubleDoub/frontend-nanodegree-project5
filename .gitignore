@@ -3,6 +3,7 @@ node_modules
 
 # do not track compiled code
 dist
+tmp
 
 # bower
 bower_components
