@@ -94,8 +94,11 @@ var createMarkers = function (error, guideList) {
                 origin: new google.maps.Point(141, 5),
                 size : new google.maps.Size(24, 24, 'px', 'px') 
         };
+            console.log(guideList[i].saved());
+            console.log(guideList[i].model.saved);
 
         if (guideList[i].saved()){
+            console.log(i);
             icon = savedIcon;
         } else {
             // use default google icons for unsaved guides

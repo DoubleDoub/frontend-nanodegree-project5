@@ -1,20 +1,18 @@
 <style type="text/css">
     /*http://stackoverflow.com/questions/10795843/how-to-implement-a-google-suggest-like-input-field*/
-
     .search {
         position: relative;
+        margin-left : 1rem;
     }
     #search {
         position: absolute;
         top : 0;
-        left: 36;
         z-index: 11;
         background : transparent;
     }
     #autoComplete {
         position: absolute;
         top : 0;
-        left: 36;
         z-index: 10;
         background-color : white;
 
@@ -23,8 +21,8 @@
 <div class="search">
     <i class="icon icon-action-grey600 icon-action-grey600-ic_search_grey600_24dp"></i>
     <input id="autoComplete" disabled="disabled" data-bind="textInput : suggestComplete" >
-    <input id="search" list="test" type="text" data-bind="textInput: filter, event: { keydown : autoComplete }">
-<datalist id="test" data-bind="foreach: filteredGuides()">
+    <input id="search" list="suggestions" type="text" data-bind="textInput: filter, event: { keydown : autoComplete }">
+<datalist id="suggestions" data-bind="foreach: filteredGuides()">
     <option data-bind="value: $data.title"></option>
 </datalist>
 </div>
@@ -32,7 +30,7 @@
     <!-- $data is an instance of Guide -->
    <div class= "savedGuide" data-bind="click: $data.jumpTo">
     <h3 data-bind="text: $data.title"></h3>
-    <div class="GuideControl">
+    <div class="guideControl">
         <i class="icon icon-action-grey600 icon-action-grey600-ic_language_grey600_24dp " data-bind="click: function(vm){ window.open(vm.url())} ,clickBubble: false"></i>
         <i class="icon icon-action-grey600 icon-action-grey600-ic_delete_grey600_24dp"data-bind="click: $data.deleteGuide ,clickBubble: false"></i>
     </div>
