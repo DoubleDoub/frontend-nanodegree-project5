@@ -169,8 +169,6 @@ var createMarkers = function (error, guideList) {
         //tell jshint to start warning again.
         /* jshint +W083 */
     }
-    console.log(guideList.length);
-    console.log(markers.length);
 
 };
 
