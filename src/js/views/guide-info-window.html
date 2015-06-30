@@ -4,8 +4,9 @@
     <h2 data-bind="text : title"></h2>
     <div data-bind= "html : intro"></div>
     <a target="_blank" data-bind="attr : { href : url}">Read More</a>
-    <div data-bind="text: saved"></div>
-    <button data-bind="click : saveGuide">Save Guide</button>
+
+    <button data-bind="visible: !saved() , click : saveGuide">Save Guide</button>
+    <i class="icon icon-action-grey600 icon-action-grey600-ic_delete_grey600_24dp" data-bind="visible: saved , click : deleteGuide"></i>
     <h4>Photos</h4>
     <div data-bind=" visible :instagramPhotos().length <= 0">Loading Instagram photos from this area...</div>
     <div data-bind="visible : instagramPhotos().length > 0" >
