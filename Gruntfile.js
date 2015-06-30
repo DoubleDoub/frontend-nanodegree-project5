@@ -150,8 +150,6 @@ module.exports = function (grunt) {
         });
 
 
-    //https://github.com/gruntjs/grunt-contrib-imagemin
-    grunt.loadNpmTasks('grunt-contrib-imagemin');
     //https://github.com/gruntjs/grunt-contrib-clean
     grunt.loadNpmTasks('grunt-contrib-clean');
     // https://github.com/chyingp/grunt-inline
@@ -169,10 +167,9 @@ module.exports = function (grunt) {
     // https://github.com/gruntjs/grunt-contrib-uglify
     grunt.loadNpmTasks('grunt-contrib-uglify');
 
-    grunt.registerTask('dev', ['clean', 'jshint', 'browserify:dev',/*'responsive_images','imagemin',*/ 'copy', 'stylus:dev','inlineCssDev']);
-    
-    grunt.registerTask('production', ['clean', 'jshint', 'browserify:production', 'uglify',/*'responsive_images','imagemin',*/ 'copy', 'stylus:production','inlineCssProd']);
+    grunt.registerTask('dev', ['clean', 'jshint', 'browserify:dev', 'copy', 'stylus:dev','inlineCssDev']);
 
-    //grunt.registerTask('default', ['clean', 'jshint', 'browserify:dev', 'stylus:dev', 'inlineCss' ]);
+    grunt.registerTask('production', ['clean', 'jshint', 'browserify:production', 'uglify', 'copy', 'stylus:production','inlineCssProd']);
+
 
 };
