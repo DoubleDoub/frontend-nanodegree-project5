@@ -16,13 +16,11 @@ var centerChangeMarkerHandler;
 //initialize the guidelist 
 var guideList = GuideModule.GuideList.init();
 
-//initializes the app
+//initializes the map
 function initMap() {
-    // init map
-    // document.getElementById('map').style.height = document.getElementsByTagName('main')[0].clientHeight + 'px';
-    // 
-    var f = window.document.getElementById('list');
-    f.appendChild(guideList.view);
+
+    //add the guide list to the dom
+    window.document.getElementById('list'),appendChild(guideList.view);
 
     var mapOptions = {
         zoom : 1,
@@ -40,9 +38,9 @@ function initMap() {
     for (var i = guideList.viewModel.savedGuides().length - 1; i >= 0; i--) {
 
         var guide = guideList.viewModel.savedGuides()[i];
-        guideList.viewModel.savedGuides()[i].triggerJump.subscribe(mapJump.bind(guideList.viewModel.savedGuides()[i]));
+        // tell the map to jump when the saved guide tells it to.
+        guide.triggerJump.subscribe(mapJump.bind(guide));
     }
-
 
      //register eventlistener when user filters on savedGuides
     // remove markers from the map and only show the filterd ones
