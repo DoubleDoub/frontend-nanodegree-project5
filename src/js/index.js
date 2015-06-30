@@ -194,9 +194,6 @@ var mapJump = function(){
         google.maps.event.removeListener(handler);
     });
 
-    // change center of the map
-    // map.panTo(new google.maps.LatLng( this.coordinates().lat, this.coordinates().lon));
-    // console.log('hola');
     document.getElementById('menu-button').click();
     // do the same stuff that happens when a marker gets clicked
     markerClickHandler(this)();

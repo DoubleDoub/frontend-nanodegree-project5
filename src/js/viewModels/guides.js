@@ -58,11 +58,14 @@ Guide.prototype.jumpTo = function(vm, event) {
         vm.triggerJump(vm.coordinates());
 };
 
+/**
+ * fetches photos from instagram servers using the
+ * guide's coordinates
+ * @param  {guide object} context the guide that the photos are for
+ * @return {void}
+ */
 Guide.prototype.fetchInstagramPhotos = function(context) {
-    //https://api.instagram.com/v1/media/search?lat=48.858844&lng=2.294351&client_id=dcd60680c14142938a4ae89995e8e66b
     var url = 'https://api.instagram.com/v1/media/search';
-    console.log('context');
-    console.log(context);
     var req = {
         lat : context.model.coordinates[0].lat,
         lng : context.model.coordinates[0].lon,
@@ -370,5 +373,4 @@ GuideList.init = function (params) {
 module.exports = {
     Guide : Guide,
     GuideList : GuideList,
-    // SavedGuides : SavedGuides
 };
