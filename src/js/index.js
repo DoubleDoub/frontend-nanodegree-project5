@@ -20,7 +20,7 @@ var guideList = GuideModule.GuideList.init();
 function initMap() {
 
     //add the guide list to the dom
-    window.document.getElementById('list'),appendChild(guideList.view);
+    window.document.getElementById('list').appendChild(guideList.view);
 
     var mapOptions = {
         zoom : 1,
