@@ -27,7 +27,7 @@ var Guide = function (guide) {
 };
 /**
  * Save the guide to localStorage. 
- * @return {[type]} [description]
+ * @return {object} this
  */
 Guide.prototype.saveGuide = function() {
     if (!global.savedGuides){
@@ -51,8 +51,8 @@ Guide.prototype.deleteGuide = function() {
 };
 
 /**
- * triggers triggerJump change event. 
- * @return {[type]} [description]
+ * triggers triggerJump change event.
+ * @return {void}
  */
 Guide.prototype.jumpTo = function(vm, event) {
         vm.triggerJump(vm.coordinates());
@@ -303,7 +303,6 @@ GuideList.prototype.deleteGuide = function(guide) {
 /**
  * Callback for keypress event on the search inputfield
  * completes the string in the search input field. On keypress
- * @return {[type]} [description]
  */
 GuideList.prototype.autoComplete = function () {
     // closure to remember what the previous location in the array was
@@ -355,7 +354,11 @@ GuideList.prototype.autoComplete = function () {
     };
 }();
 
-
+/**
+ * creates html element and applies ko bindings with a new viewmodel.
+ * @param  {[type]} params [description]
+ * @return {object} with references to the newly created PlaceListViewModel and element(view)
+ */
 GuideList.init = function (params) {
     params = params || '';
     var el = global.document.createElement('div');
