@@ -254,6 +254,20 @@ var createInfoWindow = function(data){
 var init = function (){
     initMap();
     notifications.initNotificationUI();
+    //make menu-button work
+    document.getElementById('menu-button').addEventListener('click', function (e) {
+        var listEl = document.getElementById('list');
+        var mapEl = document.getElementById('map');
+        if (e.target.classList.contains('list-active')){
+            listEl.classList.remove('list-active');
+            mapEl.classList.remove('list-active');
+            e.target.classList.remove('list-active');
+            return;
+        }
+        listEl.classList.add('list-active');
+        mapEl.classList.add('list-active');
+        e.target.classList.add('list-active');
+    });
 };
 
 window.onload = init;
