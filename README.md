@@ -21,7 +21,7 @@ $> npm install
 $> grunt initProject
 ```
 
-### For code evaluation
+### For Development
 '''
 $> grunt dev
 '''
@@ -31,3 +31,11 @@ $> grunt dev
 $> grunt production
 '''
 
+### For project feature evaluation
+
+Run appropriate grunt command and open dist/index.html in recent browser
+
+### For project code evaluation
+
+In the src folder you will find all the source files.
+After running grunt dev or grunt production the build is located in the dist folder.
